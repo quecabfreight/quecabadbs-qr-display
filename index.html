@@ -10,11 +10,6 @@
             text-align: center;
             padding: 20px;
             background-color: #f4f4f4;
-            background-image: url('your-logo-url.png'); /* Replace with actual logo URL */
-            background-size: 200px;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.1; /* Adjust transparency of watermark */
         }
         .container {
             margin-top: 50px;
@@ -51,6 +46,9 @@
             object-fit: cover;
             border: 3px solid #333;
         }
+        .upload-container {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -67,6 +65,12 @@
         <div class="info" id="loadId">Load ID: <span id="loadValue">N/A</span></div>
         
         <img id="driverPhoto" class="driver-photo" src="" alt="Driver Photo" style="display: none;">
+        
+        <div class="upload-container">
+            <h3>Upload Driver Photo</h3>
+            <input type="file" id="photoUpload" accept="image/*">
+            <button onclick="uploadPhoto()">Upload</button>
+        </div>
     </div>
     
     <script>
@@ -86,6 +90,21 @@
             const driverPhoto = document.getElementById("driverPhoto");
             driverPhoto.src = driverPhotoUrl;
             driverPhoto.style.display = "block";
+        }
+
+        // Function to simulate image upload (For future integration with a server)
+        function uploadPhoto() {
+            const fileInput = document.getElementById("photoUpload");
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    alert("Photo uploaded successfully! (Simulated for now)");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please select a photo to upload.");
+            }
         }
     </script>
 </body>
