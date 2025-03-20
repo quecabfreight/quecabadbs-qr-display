@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QueCab QR Code Display</title>
+    <title>QueCab AdbS Code Generator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,93 +18,82 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             display: inline-block;
-            position: relative;
-            z-index: 1;
         }
-        .info {
+        .input-field {
+            margin: 10px 0;
+            padding: 10px;
+            width: 90%;
+            font-size: 16px;
+        }
+        .generate-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .qr-container {
+            margin-top: 20px;
+        }
+        .qr-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .load-number {
             font-size: 28px;
             font-weight: bold;
-            margin-top: 20px;
-        }
-        .phone-link {
-            font-size: 26px;
-            color: blue;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-        .highlight {
-            font-size: 32px;
-            font-weight: bold;
             color: red;
-            margin-top: 30px;
-        }
-        .driver-photo {
-            margin-top: 20px;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #333;
-        }
-        .upload-container {
-            margin-top: 20px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>QueCab Load Verification</h1>
-        <p>Scan Successful! Here are the load details:</p>
+        <h1>QueCab AdbS Code Generator</h1>
+        <label>Truck MC#:</label>
+        <input type="text" id="mcNumber" class="input-field" placeholder="Enter MC#">
         
-        <div class="info" id="mcNumber">Truck MC#: <span id="mcValue">N/A</span></div>
-        <div class="info">DOES THE MC# MATCH?</div>
+        <label>Driver Phone:</label>
+        <input type="text" id="driverPhone" class="input-field" placeholder="Enter Phone Number">
         
-        <div class="info" id="driverPhone">Driver Contact: <a id="phoneLink" class="phone-link" href="#"></a></div>
-        <div class="info">DID THE DRIVER ANSWER THEIR PHONE?</div>
+        <label>Load ID (6 Characters):</label>
+        <input type="text" id="loadId" class="input-field" placeholder="Enter 6-character Load ID" maxlength="6">
         
-        <div class="info" id="loadId">Load ID: <span id="loadValue">N/A</span></div>
+        <label>Expiration Date:</label>
+        <input type="datetime-local" id="expiration" class="input-field">
         
-        <img id="driverPhoto" class="driver-photo" src="" alt="Driver Photo" style="display: none;">
+        <button class="generate-btn" onclick="generateAdbSCode()">Generate QueCab AdbS Code</button>
         
-        <div class="upload-container">
-            <h3>Upload Driver Photo</h3>
-            <input type="file" id="photoUpload" accept="image/*">
-            <button onclick="uploadPhoto()">Upload</button>
-        </div>
+        <div class="qr-container" id="qrContainer"></div>
     </div>
     
     <script>
-        // Properly extract and display query parameters
-        const queryParams = new URLSearchParams(window.location.search);
-        const mcNumber = queryParams.get("mc") || "N/A";
-        const driverPhone = queryParams.get("phone") || "N/A";
-        const loadId = queryParams.get("load") || "N/A";
-        const driverPhotoUrl = queryParams.get("photo");
-
-        document.getElementById("mcValue").innerText = mcNumber;
-        document.getElementById("phoneLink").innerText = driverPhone;
-        document.getElementById("phoneLink").href = "tel:" + driverPhone;
-        document.getElementById("loadValue").innerText = loadId;
-
-        if (driverPhotoUrl) {
-            const driverPhoto = document.getElementById("driverPhoto");
-            driverPhoto.src = driverPhotoUrl;
-            driverPhoto.style.display = "block";
-        }
-
-        // Function to simulate image upload (For future integration with a server)
-        function uploadPhoto() {
-            const fileInput = document.getElementById("photoUpload");
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    alert("Photo uploaded successfully! (Simulated for now)");
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert("Please select a photo to upload.");
+        function generateAdbSCode() {
+            const mc = document.getElementById("mcNumber").value;
+            const phone = document.getElementById("driverPhone").value;
+            const load = document.getElementById("loadId").value;
+            const expiration = document.getElementById("expiration").value;
+            
+            if (!mc || !phone || !load || !expiration) {
+                alert("Please fill out all fields before generating the code.");
+                return;
             }
+            
+            if (load.length !== 6) {
+                alert("Load ID must be exactly 6 characters long.");
+                return;
+            }
+            
+            const qrUrl = `https://quecabadbs-qr-display.vercel.app/?mc=${mc}&phone=${phone}&load=${load}&exp=${encodeURIComponent(expiration)}`;
+            
+            document.getElementById("qrContainer").innerHTML = `
+                <div class="qr-title">QueCab AdbS</div>
+                <img src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}' alt='QueCab AdbS Code'>
+                <div class="load-number">${load}</div>
+            `;
         }
     </script>
 </body>
