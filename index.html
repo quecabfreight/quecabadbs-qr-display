@@ -100,7 +100,7 @@
                 return;
             }
             
-            generatedQrUrl = `https://quecabadbs-qr-display.vercel.app/?mc=${mc}&phone=${phone}&load=${load}&start=${encodeURIComponent(startDate)}&exp=${encodeURIComponent(expiration)}`;
+            generatedQrUrl = `https://quecabadbs-qr-display.vercel.app/display?mc=${mc}&phone=${phone}&load=${load}&start=${encodeURIComponent(startDate)}&exp=${encodeURIComponent(expiration)}`;
             
             document.getElementById("qrContainer").innerHTML = `
                 <div class="qr-title">QueCab AdbS</div>
