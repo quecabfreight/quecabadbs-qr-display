@@ -51,13 +51,13 @@
         <h1>QueCab Load Verification</h1>
         <p>Scan Successful! Here are the load details:</p>
         
-        <div class="info" id="mcNumber">Truck MC#: </div>
+        <div class="info" id="mcNumber">Truck MC#: <span id="mcValue">N/A</span></div>
         <div class="info">DOES THE MC# MATCH?</div>
         
         <div class="info" id="driverPhone">Driver Contact: <a id="phoneLink" class="phone-link" href="#"></a></div>
         <div class="info">DID THE DRIVER ANSWER THEIR PHONE?</div>
         
-        <div class="info" id="loadId">Load ID: </div>
+        <div class="info" id="loadId">Load ID: <span id="loadValue">N/A</span></div>
         
         <img id="driverPhoto" class="driver-photo" src="" alt="Driver Photo" style="display: none;">
     </div>
@@ -70,11 +70,10 @@
         const loadId = queryParams.get("load") || "N/A";
         const driverPhotoUrl = queryParams.get("photo");
 
-        document.getElementById("mcNumber").innerText += mcNumber;
-        document.getElementById("driverPhone").innerText = "Driver Contact: ";
+        document.getElementById("mcValue").innerText = mcNumber;
         document.getElementById("phoneLink").innerText = driverPhone;
         document.getElementById("phoneLink").href = "tel:" + driverPhone;
-        document.getElementById("loadId").innerText += loadId;
+        document.getElementById("loadValue").innerText = loadId;
 
         if (driverPhotoUrl) {
             const driverPhoto = document.getElementById("driverPhoto");
