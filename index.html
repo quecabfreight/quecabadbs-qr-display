@@ -10,6 +10,11 @@
             text-align: center;
             padding: 20px;
             background-color: #f4f4f4;
+            background-image: url('your-logo-url.png'); /* Replace with actual logo URL */
+            background-size: 200px;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.1; /* Adjust transparency of watermark */
         }
         .container {
             margin-top: 50px;
@@ -18,6 +23,8 @@
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             display: inline-block;
+            position: relative;
+            z-index: 1;
         }
         .info {
             font-size: 28px;
