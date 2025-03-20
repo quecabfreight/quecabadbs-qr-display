@@ -25,7 +25,7 @@
             width: 90%;
             font-size: 16px;
         }
-        .generate-btn {
+        .generate-btn, .email-btn, .sms-btn {
             padding: 10px 20px;
             font-size: 18px;
             background-color: blue;
@@ -33,7 +33,11 @@
             border: none;
             cursor: pointer;
             margin-top: 10px;
+            display: block;
+            width: 100%;
         }
+        .email-btn { background-color: green; }
+        .sms-btn { background-color: darkorange; }
         .qr-container {
             margin-top: 20px;
         }
@@ -62,22 +66,31 @@
         <label>Load ID (6 Characters):</label>
         <input type="text" id="loadId" class="input-field" placeholder="Enter 6-character Load ID" maxlength="6">
         
+        <label>Start Date:</label>
+        <input type="datetime-local" id="startDate" class="input-field">
+        
         <label>Expiration Date:</label>
         <input type="datetime-local" id="expiration" class="input-field">
         
         <button class="generate-btn" onclick="generateAdbSCode()">Generate QueCab AdbS Code</button>
         
         <div class="qr-container" id="qrContainer"></div>
+        
+        <button class="email-btn" onclick="emailAdbSCode()" style="display:none;">Email QueCab AdbS Code</button>
+        <button class="sms-btn" onclick="smsAdbSCode()" style="display:none;">Text QueCab AdbS Code</button>
     </div>
     
     <script>
+        let generatedQrUrl = "";
+        
         function generateAdbSCode() {
             const mc = document.getElementById("mcNumber").value;
             const phone = document.getElementById("driverPhone").value;
             const load = document.getElementById("loadId").value;
+            const startDate = document.getElementById("startDate").value;
             const expiration = document.getElementById("expiration").value;
             
-            if (!mc || !phone || !load || !expiration) {
+            if (!mc || !phone || !load || !startDate || !expiration) {
                 alert("Please fill out all fields before generating the code.");
                 return;
             }
@@ -87,13 +100,37 @@
                 return;
             }
             
-            const qrUrl = `https://quecabadbs-qr-display.vercel.app/?mc=${mc}&phone=${phone}&load=${load}&exp=${encodeURIComponent(expiration)}`;
+            generatedQrUrl = `https://quecabadbs-qr-display.vercel.app/?mc=${mc}&phone=${phone}&load=${load}&start=${encodeURIComponent(startDate)}&exp=${encodeURIComponent(expiration)}`;
             
             document.getElementById("qrContainer").innerHTML = `
                 <div class="qr-title">QueCab AdbS</div>
-                <img src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}' alt='QueCab AdbS Code'>
+                <img src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(generatedQrUrl)}' alt='QueCab AdbS Code'>
                 <div class="load-number">${load}</div>
             `;
+            
+            document.querySelector(".email-btn").style.display = "block";
+            document.querySelector(".sms-btn").style.display = "block";
+        }
+        
+        function emailAdbSCode() {
+            if (!generatedQrUrl) {
+                alert("Generate a QueCab AdbS Code first.");
+                return;
+            }
+            
+            const subject = encodeURIComponent("Your QueCab AdbS Code");
+            const body = encodeURIComponent(`Here is your QueCab AdbS Code link: ${generatedQrUrl}`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+        
+        function smsAdbSCode() {
+            if (!generatedQrUrl) {
+                alert("Generate a QueCab AdbS Code first.");
+                return;
+            }
+            
+            const smsMessage = encodeURIComponent(`Your QueCab AdbS Code link: ${generatedQrUrl}`);
+            window.location.href = `sms:?body=${smsMessage}`;
         }
     </script>
 </body>
