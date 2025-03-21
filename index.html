@@ -52,6 +52,13 @@
             color: red;
             margin-top: 10px;
         }
+        .code-info {
+            text-align: left;
+            background: #f9f9f9;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -76,62 +83,73 @@
         
         <div class="qr-container" id="qrContainer"></div>
         
+        <div id="codeInfo" class="code-info" style="display:none;"></div>
+        
         <button class="email-btn" onclick="emailAdbSCode()" style="display:none;">Email QueCab AdbS Code</button>
         <button class="sms-btn" onclick="smsAdbSCode()" style="display:none;">Text QueCab AdbS Code</button>
     </div>
-    
+
     <script>
-        let generatedQrUrl = "";
-        
+        let codeDetails = "";
+
         function generateAdbSCode() {
             const mc = document.getElementById("mcNumber").value;
             const phone = document.getElementById("driverPhone").value;
             const load = document.getElementById("loadId").value;
             const startDate = document.getElementById("startDate").value;
             const expiration = document.getElementById("expiration").value;
-            
+
             if (!mc || !phone || !load || !startDate || !expiration) {
                 alert("Please fill out all fields before generating the code.");
                 return;
             }
-            
+
             if (load.length !== 6) {
                 alert("Load ID must be exactly 6 characters long.");
                 return;
             }
-            
-            generatedQrUrl = `https://quecabadbs-qr-display.vercel.app/display?mc=${mc}&phone=${phone}&load=${load}&start=${encodeURIComponent(startDate)}&exp=${encodeURIComponent(expiration)}`;
-            
-            document.getElementById("qrContainer").innerHTML = `
+
+            const displayHtml = `
+                <strong>Load ID:</strong> ${load}<br>
+                <strong>Truck MC#:</strong> ${mc}<br>
+                <strong>Driver Phone:</strong> ${phone}<br>
+                <strong>Start Date:</strong> ${new Date(startDate).toLocaleString()}<br>
+                <strong>Expiration:</strong> ${new Date(expiration).toLocaleString()}<br>
+            `;
+            codeDetails = displayHtml;
+
+            const container = document.getElementById("qrContainer");
+            container.innerHTML = `
                 <div class="qr-title">QueCab AdbS</div>
-                <img src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(generatedQrUrl)}' alt='QueCab AdbS Code'>
+                <img src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(displayHtml)}' alt='QueCab AdbS Code'>
                 <div class="load-number">${load}</div>
             `;
-            
+
+            document.getElementById("codeInfo").innerHTML = displayHtml;
+            document.getElementById("codeInfo").style.display = "block";
             document.querySelector(".email-btn").style.display = "block";
             document.querySelector(".sms-btn").style.display = "block";
         }
-        
+
         function emailAdbSCode() {
-            if (!generatedQrUrl) {
+            if (!codeDetails) {
                 alert("Generate a QueCab AdbS Code first.");
                 return;
             }
-            
             const subject = encodeURIComponent("Your QueCab AdbS Code");
-            const body = encodeURIComponent(`Here is your QueCab AdbS Code link: ${generatedQrUrl}`);
+            const body = encodeURIComponent(`Here are your QueCab AdbS Code details:\n\n${codeDetails.replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')}`);
             window.location.href = `mailto:?subject=${subject}&body=${body}`;
         }
-        
+
         function smsAdbSCode() {
-            if (!generatedQrUrl) {
+            if (!codeDetails) {
                 alert("Generate a QueCab AdbS Code first.");
                 return;
             }
-            
-            const smsMessage = encodeURIComponent(`Your QueCab AdbS Code link: ${generatedQrUrl}`);
+            const smsMessage = encodeURIComponent(`QueCab AdbS Code:\n\n${codeDetails.replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')}`);
             window.location.href = `sms:?body=${smsMessage}`;
         }
     </script>
 </body>
 </html>
+
