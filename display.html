@@ -86,6 +86,8 @@
     const start = params.get('start');
     const expiration = params.get('expiration');
 
+    const displayUrl = window.location.href;
+
     document.getElementById("loadId").textContent = load || "N/A";
     document.getElementById("mc").textContent = mc || "N/A";
     document.getElementById("start").textContent = start ? new Date(start).toLocaleString() : "N/A";
@@ -95,17 +97,17 @@
     phoneLink.textContent = phone || "N/A";
     phoneLink.href = phone ? `tel:${phone}` : "#";
 
-    const qrData = `https://quecabadbs-qr-display.vercel.app/display.html?load=${load}&mc=${mc}&phone=${phone}&start=${start}&expiration=${expiration}`;
+    const qrData = displayUrl;
     document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
 
     function shareViaEmail() {
       const subject = `QueCab AdbS Code for Load ${load}`;
-      const body = `Scan this code or click the link below to view load details:%0D%0A${qrData}`;
+      const body = `Scan this code or click the link below to view load details:%0D%0A${displayUrl}`;
       window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
 
     function shareViaText() {
-      const body = `QueCab AdbS Code for Load ${load}:%0A${qrData}`;
+      const body = `QueCab AdbS Code for Load ${load}:%0A${displayUrl}`;
       window.location.href = `sms:?&body=${encodeURIComponent(body)}`;
     }
   </script>
