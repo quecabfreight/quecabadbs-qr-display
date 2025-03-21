@@ -102,12 +102,12 @@
 
     function shareViaEmail() {
       const subject = `QueCab AdbS Code for Load ${load}`;
-      const body = `Scan this code or click the link below to view load details:%0D%0A${displayUrl}`;
+      const body = `Scan this code or click the link below to view load details:\n${decodeURIComponent(displayUrl)}`;
       window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
 
     function shareViaText() {
-      const body = `QueCab AdbS Code for Load ${load}:%0A${displayUrl}`;
+      const body = `QueCab AdbS Code for Load ${load}:\n${decodeURIComponent(displayUrl)}`;
       window.location.href = `sms:?&body=${encodeURIComponent(body)}`;
     }
   </script>
