@@ -1,155 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QueCab AdbS Code Generator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            margin-top: 50px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-        }
-        .input-field {
-            margin: 10px 0;
-            padding: 10px;
-            width: 90%;
-            font-size: 16px;
-        }
-        .generate-btn, .email-btn, .sms-btn {
-            padding: 10px 20px;
-            font-size: 18px;
-            background-color: blue;
-            color: white;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-            display: block;
-            width: 100%;
-        }
-        .email-btn { background-color: green; }
-        .sms-btn { background-color: darkorange; }
-        .qr-container {
-            margin-top: 20px;
-        }
-        .qr-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .load-number {
-            font-size: 28px;
-            font-weight: bold;
-            color: red;
-            margin-top: 10px;
-        }
-        .code-info {
-            text-align: left;
-            background: #f9f9f9;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QueCab AdbS Code Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      margin-top: 50px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+    }
+    .input-field {
+      margin: 10px 0;
+      padding: 10px;
+      width: 90%;
+      font-size: 16px;
+    }
+    .generate-btn, .email-btn, .sms-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: blue;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      display: block;
+      width: 100%;
+    }
+    .email-btn { background-color: green; }
+    .sms-btn { background-color: darkorange; }
+    .qr-container {
+      margin-top: 20px;
+    }
+    .qr-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .load-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: red;
+      margin-top: 10px;
+    }
+    .view-btn {
+      background-color: #444;
+      color: white;
+      padding: 10px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 15px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>QueCab AdbS Code Generator</h1>
-        <label>Truck MC#:</label>
-        <input type="text" id="mcNumber" class="input-field" placeholder="Enter MC#">
-        
-        <label>Driver Phone:</label>
-        <input type="text" id="driverPhone" class="input-field" placeholder="Enter Phone Number">
-        
-        <label>Load ID (6 Characters):</label>
-        <input type="text" id="loadId" class="input-field" placeholder="Enter 6-character Load ID" maxlength="6">
-        
-        <label>Start Date:</label>
-        <input type="datetime-local" id="startDate" class="input-field">
-        
-        <label>Expiration Date:</label>
-        <input type="datetime-local" id="expiration" class="input-field">
-        
-        <button class="generate-btn" onclick="generateAdbSCode()">Generate QueCab AdbS Code</button>
-        
-        <div class="qr-container" id="qrContainer"></div>
-        
-        <div id="codeInfo" class="code-info" style="display:none;"></div>
-        
-        <button class="email-btn" onclick="emailAdbSCode()" style="display:none;">Email QueCab AdbS Code</button>
-        <button class="sms-btn" onclick="smsAdbSCode()" style="display:none;">Text QueCab AdbS Code</button>
-    </div>
+  <div class="container">
+    <h1>QueCab AdbS Code Generator</h1>
+    <label>Truck MC#:</label>
+    <input type="text" id="mcNumber" class="input-field" placeholder="Enter MC#" />
 
-    <script>
-        let codeDetails = "";
+    <label>Driver Phone:</label>
+    <input type="text" id="driverPhone" class="input-field" placeholder="Enter Phone Number" />
 
-        function generateAdbSCode() {
-            const mc = document.getElementById("mcNumber").value;
-            const phone = document.getElementById("driverPhone").value;
-            const load = document.getElementById("loadId").value;
-            const startDate = document.getElementById("startDate").value;
-            const expiration = document.getElementById("expiration").value;
+    <label>Load ID (6 Characters):</label>
+    <input type="text" id="loadId" class="input-field" placeholder="Enter 6-character Load ID" maxlength="6" />
 
-            if (!mc || !phone || !load || !startDate || !expiration) {
-                alert("Please fill out all fields before generating the code.");
-                return;
-            }
+    <label>Start Date:</label>
+    <input type="datetime-local" id="startDate" class="input-field" />
 
-            if (load.length !== 6) {
-                alert("Load ID must be exactly 6 characters long.");
-                return;
-            }
+    <label>Expiration Date:</label>
+    <input type="datetime-local" id="expiration" class="input-field" />
 
-            const displayHtml = `
-                <strong>Load ID:</strong> ${load}<br>
-                <strong>Truck MC#:</strong> ${mc}<br>
-                <strong>Driver Phone:</strong> ${phone}<br>
-                <strong>Start Date:</strong> ${new Date(startDate).toLocaleString()}<br>
-                <strong>Expiration:</strong> ${new Date(expiration).toLocaleString()}<br>
-            `;
-            codeDetails = displayHtml;
+    <button class="generate-btn" onclick="generateAdbSCode()">Generate QueCab AdbS Code</button>
 
-            const container = document.getElementById("qrContainer");
-            container.innerHTML = `
-                <div class="qr-title">QueCab AdbS</div>
-                <img src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(displayHtml)}' alt='QueCab AdbS Code'>
-                <div class="load-number">${load}</div>
-            `;
+    <div id="qrContainer" class="qr-container"></div>
+    <a id="viewLink" class="view-btn" href="#" style="display: none;" target="_blank">View QueCab AdbS Code Page</a>
+    <button class="email-btn" onclick="emailAdbSCode()" style="display: none">Email QueCab AdbS Code</button>
+    <button class="sms-btn" onclick="smsAdbSCode()" style="display: none">Text QueCab AdbS Code</button>
+  </div>
 
-            document.getElementById("codeInfo").innerHTML = displayHtml;
-            document.getElementById("codeInfo").style.display = "block";
-            document.querySelector(".email-btn").style.display = "block";
-            document.querySelector(".sms-btn").style.display = "block";
-        }
+  <script>
+    let viewLink = "";
 
-        function emailAdbSCode() {
-            if (!codeDetails) {
-                alert("Generate a QueCab AdbS Code first.");
-                return;
-            }
-            const subject = encodeURIComponent("Your QueCab AdbS Code");
-            const body = encodeURIComponent(`Here are your QueCab AdbS Code details:\n\n${codeDetails.replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')}`);
-            window.location.href = `mailto:?subject=${subject}&body=${body}`;
-        }
+    function generateAdbSCode() {
+      const mc = document.getElementById("mcNumber").value;
+      const phone = document.getElementById("driverPhone").value;
+      const load = document.getElementById("loadId").value;
+      const startDate = document.getElementById("startDate").value;
+      const expiration = document.getElementById("expiration").value;
 
-        function smsAdbSCode() {
-            if (!codeDetails) {
-                alert("Generate a QueCab AdbS Code first.");
-                return;
-            }
-            const smsMessage = encodeURIComponent(`QueCab AdbS Code:\n\n${codeDetails.replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')}`);
-            window.location.href = `sms:?body=${smsMessage}`;
-        }
-    </script>
+      if (!mc || !phone || !load || !startDate || !expiration) {
+        alert("Please fill out all fields before generating the code.");
+        return;
+      }
+
+      if (load.length !== 6) {
+        alert("Load ID must be exactly 6 characters long.");
+        return;
+      }
+
+      const formattedStart = new Date(startDate).toLocaleString();
+      const formattedExp = new Date(expiration).toLocaleString();
+
+      const displayUrl = `https://quecabadbs-qr-display.vercel.app/display.html?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(startDate)}&expiration=${encodeURIComponent(expiration)}`;
+
+      document.getElementById("qrContainer").innerHTML = `
+        <h2>QueCab AdbS</h2>
+        <p><strong>Load ID:</strong> ${load}</p>
+        <p><strong>Truck MC#:</strong> ${mc}</p>
+        <p><strong>Driver Phone:</strong> ${phone}</p>
+        <p><strong>Start Date:</strong> ${formattedStart}</p>
+        <p><strong>Expiration:</strong> ${formattedExp}</p>
+        <img src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(displayUrl)}' alt='QR Code' />
+      `;
+
+      viewLink = displayUrl;
+      document.getElementById("viewLink").href = displayUrl;
+      document.getElementById("viewLink").style.display = "inline-block";
+      document.querySelector(".email-btn").style.display = "block";
+      document.querySelector(".sms-btn").style.display = "block";
+    }
+
+    function emailAdbSCode() {
+      if (!viewLink) return alert("Please generate a code first.");
+      window.location.href = `mailto:?subject=Your QueCab AdbS Code&body=View your QueCab AdbS code here: ${viewLink}`;
+    }
+
+    function smsAdbSCode() {
+      if (!viewLink) return alert("Please generate a code first.");
+      window.location.href = `sms:?body=View your QueCab AdbS code here: ${viewLink}`;
+    }
+  </script>
 </body>
 </html>
-
