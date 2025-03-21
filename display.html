@@ -86,7 +86,9 @@
     const start = params.get('start');
     const expiration = params.get('expiration');
 
-    const displayUrl = window.location.href;
+    const baseUrl = window.location.origin + window.location.pathname;
+    const queryParams = new URLSearchParams({ load, mc, phone, start, expiration });
+    const fullUrl = `${baseUrl}?${queryParams.toString()}`;
 
     document.getElementById("loadId").textContent = load || "N/A";
     document.getElementById("mc").textContent = mc || "N/A";
@@ -97,20 +99,17 @@
     phoneLink.textContent = phone || "N/A";
     phoneLink.href = phone ? `tel:${phone}` : "#";
 
-    const qrData = displayUrl;
-    document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+    document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(fullUrl)}`;
 
     function shareViaEmail() {
       const subject = `QueCab AdbS Code for Load ${load}`;
-      const lineBreak = "%0D%0A";
-      const body = `Scan this code or click the link below to view load details:${lineBreak}${displayUrl}`;
-      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`;
+      const body = `Scan this code or click the link below to view load details:\n${fullUrl}`;
+      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
 
     function shareViaText() {
-      const lineBreak = "%0D%0A";
-      const body = `QueCab AdbS Code for Load ${load}:${lineBreak}${displayUrl}`;
-      window.location.href = `sms:?&body=${body}`;
+      const body = `QueCab AdbS Code for Load ${load}:\n${fullUrl}`;
+      window.location.href = `sms:?&body=${encodeURIComponent(body)}`;
     }
   </script>
 </body>
