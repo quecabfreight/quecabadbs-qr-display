@@ -3,92 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>QueCab AdbS Code Generator</title>
+  <title>QueCab AdbS | Shipper Dashboard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      text-align: center;
-      padding: 40px;
+      background: #f1f5f9;
+      margin: 0;
+      padding: 0;
     }
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin: auto;
+    header {
+      background-color: #003366;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
     }
     h1 {
-      color: #003366;
-      font-size: 28px;
+      margin: 0;
     }
-    input, button {
-      margin: 10px;
-      padding: 10px;
-      width: 90%;
-      max-width: 400px;
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
     }
-    .qr {
-      margin-top: 30px;
+    button {
+      display: block;
+      width: 100%;
+      margin: 15px 0;
+      padding: 15px;
+      font-size: 16px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
-    .output {
-      margin-top: 20px;
-      word-wrap: break-word;
+    button:hover {
+      background-color: #004a99;
+    }
+    .logout {
+      background-color: #999;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>QueCab AdbS</h1>
+    <p>SHIPPER Dashboard</p>
+  </header>
+
   <div class="container">
-    <h1>QueCab AdbS Code Generator</h1>
-    <input id="load" placeholder="Load ID (6 characters)" />
-    <input id="mc" placeholder="Truck MC#" />
-    <input id="phone" placeholder="Driver Phone (10-digit)" />
-    <input id="start" type="datetime-local" />
-    <input id="expiration" type="datetime-local" />
-    <button onclick="generate()">Generate QueCab AdbS Code</button>
-    
-    <div class="qr" id="qrSection" style="display:none;">
-      <h3>Scan or Share:</h3>
-      <img id="qrImage" src="" alt="QR Code" />
-      <div class="output">
-        <button onclick="emailCode()">📧 Email</button>
-        <button onclick="textCode()">📱 Text</button>
-      </div>
-    </div>
+    <button onclick="alert('Create Load feature coming soon!')">+ Create New Load</button>
+    <button onclick="alert('Send Code feature coming soon!')">📤 Send QueCab AdbS Code</button>
+    <button onclick="alert('View Active Loads coming soon!')">📦 View Active Loads</button>
+    <button class="logout" onclick="window.location.href='index.html'">Log Out</button>
   </div>
-
-  <script>
-    function generate() {
-      const load = document.getElementById("load").value;
-      const mc = document.getElementById("mc").value;
-      const phone = document.getElementById("phone").value;
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
-
-      const baseUrl = "https://quecabadbs-qr-display.vercel.app/display.html";
-      const fullUrl = `${baseUrl}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
-
-      const qrImage = document.getElementById("qrImage");
-      qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(fullUrl)}`;
-      document.getElementById("qrSection").style.display = "block";
-
-      // Store link globally
-      window.latestGeneratedLink = fullUrl;
-    }
-
-    function emailCode() {
-      if (!window.latestGeneratedLink) return alert("Generate a code first.");
-      const subject = "QueCab AdbS Code";
-      const body = `Scan this code or click the link below to view load details:\n${window.latestGeneratedLink}`;
-      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    }
-
-    function textCode() {
-      if (!window.latestGeneratedLink) return alert("Generate a code first.");
-      const smsBody = `QueCab AdbS Code:\n${window.latestGeneratedLink}`;
-      window.location.href = `sms:?&body=${encodeURIComponent(smsBody)}`;
-    }
-  </script>
 </body>
 </html>
