@@ -3,86 +3,111 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>QueCab AdbS Code Viewer</title>
+  <title>QueCab AdbS Code Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      background: #eef2f7;
+      padding: 20px;
       text-align: center;
-      padding: 40px;
-    }
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin: auto;
     }
     h1 {
       color: #003366;
-      margin-bottom: 10px;
     }
-    .info {
-      font-size: 22px;
+    form {
+      background: white;
+      padding: 20px;
+      margin: auto;
+      border-radius: 10px;
+      max-width: 500px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px;
       margin: 10px 0;
+      width: 90%;
+      font-size: 16px;
     }
-    .label {
-      font-weight: bold;
-    }
-    .qr {
-      margin-top: 25px;
-    }
-    .prompt {
+    .output {
       margin-top: 30px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #222;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
     }
-    .phone a {
-      font-size: 20px;
-      color: #007bff;
-      text-decoration: none;
+    #qr {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>QueCab AdbS Code</h1>
-    <div class="info"><span class="label">Load ID:</span> <span id="loadId">N/A</span></div>
-    <div class="info"><span class="label">Truck MC#:</span> <span id="mc">N/A</span></div>
-    <div class="info"><span class="label">Start:</span> <span id="start">N/A</span></div>
-    <div class="info"><span class="label">Expiration:</span> <span id="expiration">N/A</span></div>
-    <div class="prompt">DOES THE MC# MATCH?</div>
-    <div class="prompt">DID THE DRIVER ANSWER THEIR PHONE?</div>
-    <div class="phone"><a id="phone" href="#">Driver Phone</a></div>
-    <div class="qr">
-      <img id="qrImage" src="" alt="QR Code" />
-    </div>
+
+  <h1>Generate QueCab AdbS Code</h1>
+  <form id="codeForm">
+    <input type="text" id="load" placeholder="Load ID" required><br>
+    <input type="text" id="mc" placeholder="Truck MC#" required><br>
+    <input type="tel" id="phone" placeholder="Driver Cell #" required><br>
+    <label>Start Time:</label><br>
+    <input type="datetime-local" id="start" required><br>
+    <label>Expiration Time:</label><br>
+    <input type="datetime-local" id="expiration" required><br>
+    <button type="submit">Generate</button>
+  </form>
+
+  <div class="output" id="result" style="display:none;">
+    <h2>QueCab AdbS Code</h2>
+    <p><strong>Load ID:</strong> <span id="outLoad"></span></p>
+    <p><strong>MC#:</strong> <span id="outMC"></span></p>
+    <p><strong>Start:</strong> <span id="outStart"></span></p>
+    <p><strong>Expiration:</strong> <span id="outExpiration"></span></p>
+    <p><strong>Phone:</strong> <a href="#" id="outPhone"></a></p>
+    <div id="qr"></div>
+    <br>
+    <button onclick="shareViaEmail()">Email Code</button>
+    <button onclick="shareViaText()">Text Code</button>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const mc = params.get('mc');
-    const phone = params.get('phone');
-    const load = params.get('load');
-    const start = params.get('start');
-    const expiration = params.get('expiration');
+    const form = document.getElementById('codeForm');
+    const result = document.getElementById('result');
 
-    const baseUrl = window.location.origin + window.location.pathname;
-    const queryParams = new URLSearchParams({ load, mc, phone, start, expiration });
-    const fullUrl = `${baseUrl}?${queryParams.toString()}`;
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
 
-    document.getElementById("loadId").textContent = load || "N/A";
-    document.getElementById("mc").textContent = mc || "N/A";
-    document.getElementById("start").textContent = start ? new Date(start).toLocaleString() : "N/A";
-    document.getElementById("expiration").textContent = expiration ? new Date(expiration).toLocaleString() : "N/A";
+      const load = document.getElementById('load').value;
+      const mc = document.getElementById('mc').value;
+      const phone = document.getElementById('phone').value;
+      const start = document.getElementById('start').value;
+      const expiration = document.getElementById('expiration').value;
 
-    const phoneLink = document.getElementById("phone");
-    phoneLink.textContent = phone || "N/A";
-    phoneLink.href = phone ? `tel:${phone}` : "#";
+      const url = `https://quecabadbs-qr-display.vercel.app/display.html?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
 
-    document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(fullUrl)}`;
+      document.getElementById('outLoad').textContent = load;
+      document.getElementById('outMC').textContent = mc;
+      document.getElementById('outPhone').textContent = phone;
+      document.getElementById('outPhone').href = `tel:${phone}`;
+      document.getElementById('outStart').textContent = new Date(start).toLocaleString();
+      document.getElementById('outExpiration').textContent = new Date(expiration).toLocaleString();
+
+      document.getElementById('qr').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}" alt="QR Code" />`;
+
+      result.style.display = 'block';
+
+      window.generatedUrl = url;
+    });
+
+    function shareViaEmail() {
+      const subject = "Your QueCab AdbS Code";
+      const body = `Scan this code or click the link below to view load details:\n${window.generatedUrl}`;
+      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+
+    function shareViaText() {
+      const body = `Scan this code or click the link below to view load details:\n${window.generatedUrl}`;
+      window.location.href = `sms:?body=${encodeURIComponent(body)}`;
+    }
   </script>
+
 </body>
 </html>
