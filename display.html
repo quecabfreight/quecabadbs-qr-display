@@ -44,19 +44,6 @@
       color: #007bff;
       text-decoration: none;
     }
-    .share-buttons {
-      margin-top: 30px;
-    }
-    .share-buttons button {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      background-color: #1e40af;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -71,10 +58,6 @@
     <div class="phone"><a id="phone" href="#">Driver Phone</a></div>
     <div class="qr">
       <img id="qrImage" src="" alt="QR Code" />
-    </div>
-    <div class="share-buttons">
-      <button onclick="shareViaEmail()">📧 Email Code</button>
-      <button onclick="shareViaText()">📱 Text Code</button>
     </div>
   </div>
 
@@ -100,17 +83,6 @@
     phoneLink.href = phone ? `tel:${phone}` : "#";
 
     document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(fullUrl)}`;
-
-    function shareViaEmail() {
-      const subject = `QueCab AdbS Code for Load ${load}`;
-      const body = `Scan this code or click the link below to view load details:\n${fullUrl}`;
-      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    }
-
-    function shareViaText() {
-      const body = `QueCab AdbS Code for Load ${load}:\n${fullUrl}`;
-      window.location.href = `sms:?&body=${encodeURIComponent(body)}`;
-    }
   </script>
 </body>
 </html>
