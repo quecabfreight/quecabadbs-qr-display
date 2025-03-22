@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,6 +34,10 @@
     .qr {
       margin-top: 25px;
     }
+    .qr img {
+      width: 300px;
+      height: 300px;
+    }
     .prompt {
       margin-top: 30px;
       font-size: 20px;
@@ -51,6 +56,8 @@
     <h1>QueCab AdbS Code</h1>
     <div class="info"><span class="label">Load ID:</span> <span id="loadId">N/A</span></div>
     <div class="info"><span class="label">Truck MC#:</span> <span id="mc">N/A</span></div>
+    <div class="info"><span class="label">Start:</span> <span id="start">N/A</span></div>
+    <div class="info"><span class="label">Expiration:</span> <span id="expiration">N/A</span></div>
     <div class="prompt">DOES THE MC# MATCH?</div>
     <div class="prompt">DID THE DRIVER ANSWER THEIR PHONE?</div>
     <div class="phone"><a id="phone" href="#">Driver Phone</a></div>
@@ -60,23 +67,31 @@
   </div>
 
   <script>
+    function formatPhoneNumber(phone) {
+      const cleaned = ('' + phone).replace(/\D/g, '');
+      const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+      return match ? \`\${match[1]}-\${match[2]}-\${match[3]}\` : phone;
+    }
+
     const params = new URLSearchParams(window.location.search);
-    const mc = params.get('mc');
-    const phone = params.get('phone');
-    const load = params.get('load');
+    const mc = params.get('mc') || "Not Provided";
+    const phone = params.get('phone') || "Not Provided";
+    const load = params.get('load') || "Not Provided";
+    const start = params.get('start');
+    const expiration = params.get('expiration');
 
-    const baseUrl = window.location.origin + "/display.html";
-    const queryParams = new URLSearchParams({ load, mc, phone });
-    const fullUrl = `${baseUrl}?${queryParams.toString()}`;
+    document.getElementById("loadId").textContent = load;
+    document.getElementById("mc").textContent = mc;
+    document.getElementById("start").textContent = start ? new Date(start).toLocaleString() : "Not Provided";
+    document.getElementById("expiration").textContent = expiration ? new Date(expiration).toLocaleString() : "Not Provided";
 
-    document.getElementById("loadId").textContent = load || "N/A";
-    document.getElementById("mc").textContent = mc || "N/A";
-
+    const formattedPhone = phone !== "Not Provided" ? formatPhoneNumber(phone) : "Not Provided";
     const phoneLink = document.getElementById("phone");
-    phoneLink.textContent = phone || "N/A";
-    phoneLink.href = phone ? `tel:${phone}` : "#";
+    phoneLink.textContent = formattedPhone;
+    phoneLink.href = phone !== "Not Provided" ? \`tel:\${phone}\` : "#";
 
-    document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(fullUrl)}`;
+    const qrData = \`Load:\${load},MC:\${mc},Phone:\${formattedPhone}\`;
+    document.getElementById("qrImage").src = \`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=\${encodeURIComponent(qrData)}\`;
   </script>
 </body>
 </html>
