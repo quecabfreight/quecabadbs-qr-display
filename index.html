@@ -3,89 +3,111 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>QueCab AdbS Login</title>
+  <title>QueCab AdbS Code Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      display: flex;
-      height: 100vh;
-      align-items: center;
-      justify-content: center;
-    }
-    .login-container {
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
+      background: #eef2f7;
+      padding: 20px;
       text-align: center;
     }
     h1 {
       color: #003366;
-      margin-bottom: 20px;
     }
-    input, select {
-      width: 100%;
+    form {
+      background: white;
+      padding: 20px;
+      margin: auto;
+      border-radius: 10px;
+      max-width: 500px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
       padding: 10px;
       margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background: #003366;
-      color: white;
-      border: none;
-      padding: 12px;
-      width: 100%;
-      border-radius: 5px;
+      width: 90%;
       font-size: 16px;
-      cursor: pointer;
     }
-    #shipperCodeGroup {
-      display: none;
+    .output {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+    }
+    #qr {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h1>QueCab AdbS Login</h1>
-    <form id="loginForm">
-      <input type="email" placeholder="Email" required />
-      <input type="password" placeholder="Password" required />
-      <select id="roleSelect" required>
-        <option value="">Select Role</option>
-        <option value="shipper">Shipper</option>
-        <option value="broker">Broker</option>
-        <option value="driver">Driver</option>
-      </select>
-      <div id="shipperCodeGroup">
-        <input type="text" placeholder="Shipper Access Code" />
-      </div>
-      <button type="submit">Login</button>
-    </form>
+
+  <h1>Generate QueCab AdbS Code</h1>
+  <form id="codeForm">
+    <input type="text" id="load" placeholder="Load ID" required><br>
+    <input type="text" id="mc" placeholder="Truck MC#" required><br>
+    <input type="tel" id="phone" placeholder="Driver Cell #" required><br>
+    <label>Start Time:</label><br>
+    <input type="datetime-local" id="start" required><br>
+    <label>Expiration Time:</label><br>
+    <input type="datetime-local" id="expiration" required><br>
+    <button type="submit">Generate</button>
+  </form>
+
+  <div class="output" id="result" style="display:none;">
+    <h2>QueCab AdbS Code</h2>
+    <p><strong>Load ID:</strong> <span id="outLoad"></span></p>
+    <p><strong>MC#:</strong> <span id="outMC"></span></p>
+    <p><strong>Start:</strong> <span id="outStart"></span></p>
+    <p><strong>Expiration:</strong> <span id="outExpiration"></span></p>
+    <p><strong>Phone:</strong> <a href="#" id="outPhone"></a></p>
+    <div id="qr"></div>
+    <br>
+    <button onclick="shareViaEmail()">Email Code</button>
+    <button onclick="shareViaText()">Text Code</button>
   </div>
 
   <script>
-    const roleSelect = document.getElementById("roleSelect");
-    const shipperCodeGroup = document.getElementById("shipperCodeGroup");
+    const form = document.getElementById('codeForm');
+    const result = document.getElementById('result');
 
-    roleSelect.addEventListener("change", () => {
-      shipperCodeGroup.style.display = roleSelect.value === "shipper" ? "block" : "none";
-    });
-
-    document.getElementById("loginForm").addEventListener("submit", function(e) {
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
-      const role = roleSelect.value;
-      if (role === "shipper") {
-        window.location.href = "shipper-dashboard.html";
-      } else if (role === "broker") {
-        window.location.href = "broker-dashboard.html";
-      } else if (role === "driver") {
-        window.location.href = "driver-dashboard.html";
-      }
+
+      const load = document.getElementById('load').value;
+      const mc = document.getElementById('mc').value;
+      const phone = document.getElementById('phone').value;
+      const start = document.getElementById('start').value;
+      const expiration = document.getElementById('expiration').value;
+
+      const url = `https://quecabadbs-qr-display.vercel.app/display.html?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
+
+      document.getElementById('outLoad').textContent = load;
+      document.getElementById('outMC').textContent = mc;
+      document.getElementById('outPhone').textContent = phone;
+      document.getElementById('outPhone').href = `tel:${phone}`;
+      document.getElementById('outStart').textContent = new Date(start).toLocaleString();
+      document.getElementById('outExpiration').textContent = new Date(expiration).toLocaleString();
+
+      document.getElementById('qr').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}" alt="QR Code" />`;
+
+      result.style.display = 'block';
+
+      window.generatedUrl = url;
     });
+
+    function shareViaEmail() {
+      const subject = "Your QueCab AdbS Code";
+      const body = `Scan this code or click the link below to view load details:\n${window.generatedUrl}`;
+      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+
+    function shareViaText() {
+      const body = `Scan this code or click the link below to view load details:\n${window.generatedUrl}`;
+      window.location.href = `sms:?body=${encodeURIComponent(body)}`;
+    }
   </script>
+
 </body>
 </html>
