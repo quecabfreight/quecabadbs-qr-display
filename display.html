@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +7,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      background: #f4f4f4;
       text-align: center;
       padding: 40px;
     }
@@ -35,8 +34,8 @@
       margin-top: 25px;
     }
     .qr img {
-      width: 300px;
-      height: 300px;
+      display: block;
+      margin: 0 auto;
     }
     .prompt {
       margin-top: 30px;
@@ -67,31 +66,28 @@
   </div>
 
   <script>
-    function formatPhoneNumber(phone) {
-      const cleaned = ('' + phone).replace(/\D/g, '');
-      const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-      return match ? \`\${match[1]}-\${match[2]}-\${match[3]}\` : phone;
-    }
-
     const params = new URLSearchParams(window.location.search);
-    const mc = params.get('mc') || "Not Provided";
-    const phone = params.get('phone') || "Not Provided";
-    const load = params.get('load') || "Not Provided";
+    const mc = params.get('mc');
+    const phone = params.get('phone');
+    const load = params.get('load');
     const start = params.get('start');
     const expiration = params.get('expiration');
 
-    document.getElementById("loadId").textContent = load;
-    document.getElementById("mc").textContent = mc;
-    document.getElementById("start").textContent = start ? new Date(start).toLocaleString() : "Not Provided";
-    document.getElementById("expiration").textContent = expiration ? new Date(expiration).toLocaleString() : "Not Provided";
+    if (mc) document.getElementById("mc").textContent = mc;
+    if (load) document.getElementById("loadId").textContent = load;
+    if (start) document.getElementById("start").textContent = new Date(start).toLocaleString();
+    if (expiration) document.getElementById("expiration").textContent = new Date(expiration).toLocaleString();
 
-    const formattedPhone = phone !== "Not Provided" ? formatPhoneNumber(phone) : "Not Provided";
     const phoneLink = document.getElementById("phone");
-    phoneLink.textContent = formattedPhone;
-    phoneLink.href = phone !== "Not Provided" ? \`tel:\${phone}\` : "#";
+    if (phone) {
+      phoneLink.textContent = phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+      phoneLink.href = `tel:${phone}`;
+    }
 
-    const qrData = \`Load:\${load},MC:\${mc},Phone:\${formattedPhone}\`;
-    document.getElementById("qrImage").src = \`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=\${encodeURIComponent(qrData)}\`;
+    if (load && mc && phone) {
+      const qrData = `Load:${load}, MC:${mc}, Phone:${phone}`;
+      document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+    }
   </script>
 </body>
 </html>
