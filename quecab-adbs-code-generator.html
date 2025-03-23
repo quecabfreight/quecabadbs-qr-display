@@ -29,11 +29,20 @@
     .qr-preview {
       margin-top: 30px;
     }
+    .qr-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
     img {
       width: 250px;
       height: 250px;
-      display: block;
-      margin: 20px auto;
+    }
+    .actions {
+      margin-top: 20px;
+    }
+    .actions button {
+      margin: 5px;
     }
   </style>
 </head>
@@ -60,9 +69,13 @@
 
   <div class="qr-preview" id="qrPreview" style="display:none;">
     <h3>Your QueCab AdbS Code</h3>
-    <img id="qrImage" src="" alt="QR Code" />
-    <br/>
-    <button onclick="sendLink()">📧 Email Code</button>
+    <div class="qr-wrapper">
+      <img id="qrImage" src="" alt="QR Code" />
+    </div>
+    <div class="actions">
+      <button onclick="sendLink()">📧 Email Code</button>
+      <button onclick="textLink()">📱 Text Code</button>
+    </div>
   </div>
 
   <script>
@@ -98,6 +111,21 @@
       const subject = encodeURIComponent("Your QueCab AdbS Code");
       const body = encodeURIComponent(`Scan this code or click the link below to view load details:\n${url}`);
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    function textLink() {
+      const load = document.getElementById("loadId").value;
+      const mc = document.getElementById("mc").value;
+      const phone = formatPhone(document.getElementById("phone").value);
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
+
+      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
+      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
+
+      // Use SMS URL
+      const smsMessage = encodeURIComponent(`Your QueCab AdbS Code:\n${url}`);
+      window.location.href = `sms:?body=${smsMessage}`;
     }
   </script>
 </body>
