@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QueCab AdbS Code Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f3;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #003366;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+    .output {
+      margin-top: 20px;
+      background: #f8f8f8;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .qr-code {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .send-buttons button {
+      margin-top: 10px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .send-buttons button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>QueCab AdbS Code Generator</h1>
+    <label for="load">Load ID:</label>
+    <input type="text" id="load" placeholder="Enter Load ID" />
+
+    <label for="mc">Truck MC#:</label>
+    <input type="text" id="mc" placeholder="Enter Truck MC#" />
+
+    <label for="phone">Driver Phone Number:</label>
+    <input type="text" id="phone" placeholder="Enter Phone Number (e.g., 5858887777)" />
+
+    <button onclick="generateCode()">Generate QueCab AdbS Code</button>
+
+    <div id="output" class="output" style="display:none;">
+      <p><strong>Share this code via:</strong></p>
+      <div class="send-buttons">
+        <button onclick="emailCode()">Email Code</button>
+        <button onclick="textCode()">Text Code</button>
+      </div>
+      <p id="linkDisplay"></p>
+      <div class="qr-code">
+        <img id="qrImage" src="" alt="Generated QR Code" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function formatPhone(phone) {
+      return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+    }
+
+    function generateCode() {
+      const load = document.getElementById('load').value.trim();
+      const mc = document.getElementById('mc').value.trim();
+      const phoneRaw = document.getElementById('phone').value.trim();
+      const phone = formatPhone(phoneRaw);
+
+      const baseUrl = "https://quecabadbs-qr-display.vercel.app/display.html";
+      const url = `${baseUrl}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}`;
+
+      document.getElementById('output').style.display = "block";
+      document.getElementById('linkDisplay').innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
+      document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
+
+      // Save for email/text
+      window.latestLink = url;
+    }
+
+    function emailCode() {
+      const subject = "Your QueCab AdbS Code";
+      const body = `Scan this code or click the link below to view load details:\n\n${window.latestLink}`;
+      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+
+    function textCode() {
+      const body = `Scan this code or click the link below to view load details:\n\n${window.latestLink}`;
+      window.location.href = `sms:?body=${encodeURIComponent(body)}`;
+    }
+  </script>
+</body>
+</html>
