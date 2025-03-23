@@ -2,112 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>QueCab AdbS Code Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #eef2f7;
-      padding: 20px;
+      padding: 30px;
+      background: #f4f4f4;
       text-align: center;
     }
     h1 {
       color: #003366;
     }
-    form {
-      background: white;
-      padding: 20px;
-      margin: auto;
-      border-radius: 10px;
-      max-width: 500px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
     input, button {
       padding: 10px;
-      margin: 10px 0;
-      width: 90%;
+      margin: 10px;
+      width: 250px;
       font-size: 16px;
     }
-    .output {
+    #qrDisplay {
       margin-top: 30px;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 500px;
-      margin: auto;
     }
-    #qr {
-      margin-top: 20px;
+    img {
+      margin-top: 10px;
+      max-width: 300px;
     }
   </style>
 </head>
 <body>
+  <h1>QueCab AdbS Code Generator</h1>
 
-  <h1>Generate QueCab AdbS Code</h1>
-  <form id="codeForm">
-    <input type="text" id="load" placeholder="Load ID" required><br>
-    <input type="text" id="mc" placeholder="Truck MC#" required><br>
-    <input type="tel" id="phone" placeholder="Driver Cell #" required><br>
-    <label>Start Time:</label><br>
-    <input type="datetime-local" id="start" required><br>
-    <label>Expiration Time:</label><br>
-    <input type="datetime-local" id="expiration" required><br>
-    <button type="submit">Generate</button>
-  </form>
+  <input id="loadId" placeholder="Load ID" /><br>
+  <input id="mc" placeholder="Truck MC#" /><br>
+  <input id="phone" placeholder="Driver Phone (1234567890)" /><br>
+  <label>Start Time:</label><br>
+  <input type="datetime-local" id="start" /><br>
+  <label>Expiration Time:</label><br>
+  <input type="datetime-local" id="expiration" /><br>
 
-  <div class="output" id="result" style="display:none;">
-    <h2>QueCab AdbS Code</h2>
-    <p><strong>Load ID:</strong> <span id="outLoad"></span></p>
-    <p><strong>MC#:</strong> <span id="outMC"></span></p>
-    <p><strong>Start:</strong> <span id="outStart"></span></p>
-    <p><strong>Expiration:</strong> <span id="outExpiration"></span></p>
-    <p><strong>Phone:</strong> <a href="#" id="outPhone"></a></p>
-    <div id="qr"></div>
-    <br>
-    <button onclick="shareViaEmail()">Email Code</button>
-    <button onclick="shareViaText()">Text Code</button>
+  <button onclick="generate()">Generate Code</button>
+
+  <div id="qrDisplay" style="display: none;">
+    <h3>QueCab AdbS Code:</h3>
+    <a id="link" href="#" target="_blank">Click to View Code</a><br><br>
+    <img id="qrCode" src="" alt="QR Code" /><br><br>
+    <button onclick="sendEmail()">Email</button>
+    <button onclick="sendText()">Text</button>
   </div>
 
   <script>
-    const form = document.getElementById('codeForm');
-    const result = document.getElementById('result');
+    function formatPhone(phone) {
+      return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+    }
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const load = document.getElementById('load').value;
-      const mc = document.getElementById('mc').value;
-      const phone = document.getElementById('phone').value;
-      const start = document.getElementById('start').value;
-      const expiration = document.getElementById('expiration').value;
+    function generate() {
+      const load = document.getElementById("loadId").value.trim();
+      const mc = document.getElementById("mc").value.trim();
+      const phoneRaw = document.getElementById("phone").value.trim();
+      const phone = phoneRaw.replace(/\D/g, ''); // Remove non-digits
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
 
       const url = `https://quecabadbs-qr-display.vercel.app/display.html?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
+      
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
 
-      document.getElementById('outLoad').textContent = load;
-      document.getElementById('outMC').textContent = mc;
-      document.getElementById('outPhone').textContent = phone;
-      document.getElementById('outPhone').href = `tel:${phone}`;
-      document.getElementById('outStart').textContent = new Date(start).toLocaleString();
-      document.getElementById('outExpiration').textContent = new Date(expiration).toLocaleString();
+      document.getElementById("link").href = url;
+      document.getElementById("qrCode").src = qrUrl;
+      document.getElementById("qrDisplay").style.display = "block";
+    }
 
-      document.getElementById('qr').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}" alt="QR Code" />`;
-
-      result.style.display = 'block';
-
-      window.generatedUrl = url;
-    });
-
-    function shareViaEmail() {
+    function sendEmail() {
+      const link = document.getElementById("link").href;
       const subject = "Your QueCab AdbS Code";
-      const body = `Scan this code or click the link below to view load details:\n${window.generatedUrl}`;
+      const body = `Scan this code or click the link below to view load details:\n${link}`;
       window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
 
-    function shareViaText() {
-      const body = `Scan this code or click the link below to view load details:\n${window.generatedUrl}`;
-      window.location.href = `sms:?body=${encodeURIComponent(body)}`;
+    function sendText() {
+      const link = document.getElementById("link").href;
+      const smsBody = `Scan this code or click the link:\n${link}`;
+      window.location.href = `sms:?&body=${encodeURIComponent(smsBody)}`;
     }
   </script>
-
 </body>
 </html>
