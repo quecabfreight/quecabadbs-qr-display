@@ -9,7 +9,6 @@
       font-family: Arial, sans-serif;
       background: #f9f9f9;
       padding: 30px;
-      color: #333;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -33,7 +32,7 @@
       font-weight: bold;
       margin-top: 15px;
     }
-    input, button {
+    input, select, button {
       padding: 10px;
       margin: 8px 0;
       font-size: 16px;
@@ -78,6 +77,40 @@
     .generated-details a:hover {
       text-decoration: underline;
     }
+
+    /* Dropdown arrow styling */
+    select {
+      background-color: #003366; /* Matching blue background */
+      color: white; /* White text */
+      border: 1px solid #003366; /* Matching border */
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      border-radius: 4px;
+      appearance: none; /* Remove default arrow */
+      -webkit-appearance: none; /* For Safari */
+      -moz-appearance: none; /* For Firefox */
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #002147; /* Darker border on focus */
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper::after {
+      content: ' ▼'; /* Custom arrow */
+      font-size: 18px;
+      color: white;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -85,83 +118,96 @@
   <div class="container">
     <h1>Truck/Driver Confirmation</h1>
 
-    <label for="loadId">Load ID:</label>
-    <input type="text" id="loadId" placeholder="Enter Load ID" required />
-
-    <label for="mc">Truck MC#:</label>
-    <input type="text" id="mc" placeholder="Enter Truck MC#" required />
-
-    <label for="phone">Driver Phone:</label>
-    <input type="tel" id="phone" placeholder="123-456-7890" required />
-
-    <label for="start">Start Time:</label>
-    <input type="datetime-local" id="start" required />
-
-    <label for="expiration">Expiration Time:</label>
-    <input type="datetime-local" id="expiration" required />
-
-    <button onclick="generate()">Generate Confirmation</button>
-
-    <div class="generated-details" id="generated-details">
-      <h3>Generated Confirmation Details:</h3>
-      <p><strong>MC#:</strong> <span id="generated-mc"></span></p>
-      <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
-      <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
-      <p><strong>Status:</strong> <span id="generated-status"></span></p>
-      
-      <!-- Show actions only after confirmation is generated -->
-      <div class="actions" id="confirmation-actions">
-        <button onclick="sendLink()">📧 Email Confirmation</button>
-        <button onclick="textLink()">📱 Text Confirmation</button>
+    <form id="registration-form">
+      <label for="role">Select Role:</label>
+      <div class="select-wrapper">
+        <select id="role" required>
+          <option value="broker">Broker</option>
+          <option value="shipper">Shipper</option>
+          <option value="driver">Driver</option>
+        </select>
       </div>
-    </div>
+
+      <div id="broker-fields" class="role-fields">
+        <label for="broker-id">Broker ID:</label>
+        <input type="text" id="broker-id" placeholder="Enter Broker ID" required />
+        <label for="business-email">Business Email:</label>
+        <input type="email" id="business-email" placeholder="Enter Email" required />
+        <label for="license-number">Broker License Number:</label>
+        <input type="text" id="license-number" placeholder="Enter License Number" required />
+      </div>
+
+      <div id="shipper-fields" class="role-fields" style="display: none;">
+        <label for="company-name">Company Name:</label>
+        <input type="text" id="company-name" placeholder="Enter Company Name" required />
+        <label for="shipper-email">Business Email:</label>
+        <input type="email" id="shipper-email" placeholder="Enter Email" required />
+      </div>
+
+      <div id="driver-fields" class="role-fields" style="display: none;">
+        <label for="phone-number">Phone Number:</label>
+        <input type="tel" id="phone-number" placeholder="Enter Phone Number" required />
+        <label for="carrier-name">Carrier Business Name (if applicable):</label>
+        <input type="text" id="carrier-name" placeholder="Enter Carrier Business Name" />
+      </div>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Choose a secure password" required />
+
+      <button type="submit">Register</button>
+    </form>
   </div>
 
+  <script>
+    document.getElementById('role').addEventListener('change', function () {
+      const role = this.value;
+      document.querySelectorAll('.role-fields').forEach(field => {
+        field.style.display = 'none'; // Hide all fields
+      });
+
+      if (role === 'broker') {
+        document.getElementById('broker-fields').style.display = 'block';
+      } else if (role === 'shipper') {
+        document.getElementById('shipper-fields').style.display = 'block';
+      } else if (role === 'driver') {
+        document.getElementById('driver-fields').style.display = 'block';
+      }
+    });
+
+    // Automatically show the broker's fields by default
+    document.getElementById('role').dispatchEvent(new Event('change'));
+  </script>
+
+  <!-- Send TDC Link Functionality -->
   <script>
     function formatPhone(phone) {
       return phone.replace(/\D/g, '')
         .replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
     }
 
-    function generate() {
-      const load = document.getElementById("loadId").value;
-      const mc = document.getElementById("mc").value;
-      const phone = formatPhone(document.getElementById("phone").value);
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
-
-      // Display generated details
-      document.getElementById("generated-mc").textContent = mc;
-      document.getElementById("generated-load-id").textContent = load;
-
-      // Set the phone link to dial the driver
-      const phoneLink = "tel:" + phone;
-      document.getElementById("driver-phone-link").setAttribute("href", phoneLink);
-      document.getElementById("driver-phone-link").textContent = phone;
-
-      // Set the status based on expiration
-      const currentDate = new Date();
-      const expDate = new Date(expiration);
-      let status = 'Active';
-      if (currentDate > expDate) {
-        status = 'Expired';
-      }
-      document.getElementById("generated-status").textContent = status;
-
-      // Show the generated details
-      document.getElementById("generated-details").style.display = "block";
-
-      // Show email/text buttons only after confirmation is generated
-      document.getElementById("confirmation-actions").style.display = "block";
-    }
-
     function sendLink() {
       const load = document.getElementById("loadId").value;
       const mc = document.getElementById("mc").value;
       const phone = formatPhone(document.getElementById("phone").value);
+      const companyName = document.getElementById("company-name") ? document.getElementById("company-name").value : ''; // For Shipper role
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
 
+      // Phone number link
+      const phoneLink = "tel:" + phone;
+
+      // Email Body
       const subject = encodeURIComponent("Your Truck/Driver Confirmation");
-      const body = encodeURIComponent(`Click the link or call the driver:\nMC#: ${mc}\nPhone: ${phone}\nLoad: ${load}`);
+      const body = encodeURIComponent(
+        `DOES THE MC# MATCH?: ${mc}\n` +
+        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` +  // Added this
+        `MC#: ${mc}\n` +
+        `Phone: <a href="${phoneLink}">${phone}</a>\n` +  // This ensures the phone number is clickable in the email
+        `Load: ${load}\n` +
+        `Start: ${start}\n` +
+        `Expiration: ${expiration}`
+      );
+
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }
 
@@ -169,11 +215,23 @@
       const load = document.getElementById("loadId").value;
       const mc = document.getElementById("mc").value;
       const phone = formatPhone(document.getElementById("phone").value);
+      const companyName = document.getElementById("company-name") ? document.getElementById("company-name").value : ''; // For Shipper role
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
 
-      const smsMessage = encodeURIComponent(`Truck/Driver Confirmation:\nMC#: ${mc}\nPhone: ${phone}\nLoad: ${load}`);
+      // SMS Message
+      const smsMessage = encodeURIComponent(
+        `DOES THE MC# MATCH?: ${mc}\n` +
+        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` + // Added this
+        `MC#: ${mc}\n` +
+        `Phone: ${phone}\n` +
+        `Load: ${load}\n` +
+        `Start: ${start}\n` +
+        `Expiration: ${expiration}`
+      );
+
       window.location.href = `sms:?body=${smsMessage}`;
     }
   </script>
-
 </body>
 </html>
