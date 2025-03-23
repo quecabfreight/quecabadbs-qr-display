@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background: #f2f2f2;
       text-align: center;
       padding: 40px;
     }
@@ -30,10 +30,8 @@
     .label {
       font-weight: bold;
     }
-    .qr img {
-      display: block;
-      margin: 20px auto;
-      max-width: 300px;
+    .qr {
+      margin-top: 25px;
     }
     .prompt {
       margin-top: 30px;
@@ -67,20 +65,22 @@
     const phone = params.get('phone');
     const load = params.get('load');
 
-    if (load) document.getElementById("loadId").textContent = load;
-    if (mc) document.getElementById("mc").textContent = mc;
+    // Update page with values from URL
+    document.getElementById("loadId").textContent = load || "N/A";
+    document.getElementById("mc").textContent = mc || "N/A";
 
     const phoneLink = document.getElementById("phone");
     if (phone) {
-      const formattedPhone = phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
-      phoneLink.textContent = formattedPhone;
+      phoneLink.textContent = phone;
       phoneLink.href = `tel:${phone}`;
+    } else {
+      phoneLink.textContent = "N/A";
     }
 
+    // Generate and show QR code
     if (load && mc && phone) {
       const qrData = `Load:${load}, MC:${mc}, Phone:${phone}`;
-      document.getElementById("qrImage").src =
-        `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+      document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
     }
   </script>
 </body>
