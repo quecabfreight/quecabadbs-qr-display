@@ -108,8 +108,8 @@
 
     <div class="generated-details" id="generated-details">
       <h3>Generated Confirmation Details:</h3>
-      <p><strong>DOES THE MC# MATCH?:</strong> <span id="generated-mc"></span></p> <!-- Added this -->
-      <p><strong>DOES THE COMPANY NAME MATCH?:</strong> <span id="generated-company-name"></span></p> <!-- Added this -->
+      <p><strong>DOES THE MC# MATCH?:</strong> <span id="generated-mc"></span></p> <!-- Added this in all caps -->
+      <p><strong>DOES THE COMPANY NAME MATCH?:</strong> <span id="generated-company-name"></span></p> <!-- Added this in all caps -->
       <p><strong>MC#:</strong> <span id="generated-mc-display"></span></p>
       <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
       <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
@@ -170,9 +170,9 @@
       const subject = encodeURIComponent("Your Truck/Driver Confirmation");
       const body = encodeURIComponent(
         `DOES THE MC# MATCH?: ${mc}\n` +
-        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` +
+        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` +  // Added this
         `MC#: ${mc}\n` +
-        `Phone: <a href="${phoneLink}">${phone}</a>\n` +
+        `Phone: <a href="${phoneLink}">${phone}</a>\n` +  // This ensures the phone number is clickable in the email
         `Load: ${load}\n` +
         `Start: ${start}\n` +
         `Expiration: ${expiration}`
@@ -191,7 +191,7 @@
 
       const smsMessage = encodeURIComponent(
         `DOES THE MC# MATCH?: ${mc}\n` +
-        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` +
+        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` + // Added this
         `MC#: ${mc}\n` +
         `Phone: ${phone}\n` +
         `Load: ${load}\n` +
