@@ -14,9 +14,14 @@
     h1 {
       color: #003366;
     }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 15px;
+    }
     input, button {
       padding: 10px;
-      margin: 8px;
+      margin: 8px 0;
       font-size: 16px;
       width: 300px;
       max-width: 90%;
@@ -25,22 +30,32 @@
       margin-top: 30px;
     }
     img {
-      max-width: 100%;
-      height: auto;
+      width: 250px;
+      height: 250px;
       display: block;
-      margin: auto;
+      margin: 20px auto;
     }
   </style>
 </head>
 <body>
   <h1>QueCab AdbS Code Generator</h1>
 
-  <input type="text" id="loadId" placeholder="Enter Load ID" required /><br/>
-  <input type="text" id="mc" placeholder="Enter Truck MC#" required /><br/>
-  <input type="tel" id="phone" placeholder="Enter Driver Phone (123-456-7890)" required /><br/>
-  <input type="datetime-local" id="start" placeholder="Start Time" /><br/>
-  <input type="datetime-local" id="expiration" placeholder="Expiration Time" /><br/>
+  <label for="loadId">Load ID:</label>
+  <input type="text" id="loadId" placeholder="Enter Load ID" required />
 
+  <label for="mc">Truck MC#:</label>
+  <input type="text" id="mc" placeholder="Enter Truck MC#" required />
+
+  <label for="phone">Driver Phone:</label>
+  <input type="tel" id="phone" placeholder="123-456-7890" required />
+
+  <label for="start">Start Time:</label>
+  <input type="datetime-local" id="start" />
+
+  <label for="expiration">Expiration Time:</label>
+  <input type="datetime-local" id="expiration" />
+
+  <br/><br/>
   <button onclick="generate()">Generate Code</button>
 
   <div class="qr-preview" id="qrPreview" style="display:none;">
@@ -59,13 +74,12 @@
     function generate() {
       const load = document.getElementById("loadId").value;
       const mc = document.getElementById("mc").value;
-      const phone = document.getElementById("phone").value;
+      const phone = formatPhone(document.getElementById("phone").value);
       const start = document.getElementById("start").value;
       const expiration = document.getElementById("expiration").value;
 
-      const formattedPhone = formatPhone(phone);
       const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
-      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(formattedPhone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
+      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
 
       document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
       document.getElementById("qrPreview").style.display = "block";
