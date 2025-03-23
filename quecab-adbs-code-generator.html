@@ -58,24 +58,19 @@
   <input type="datetime-local" id="expiration" required />
 
   <br/><br/>
-  <button onclick="generate()">Generate Confirmation Code</button>
+  <button onclick="generate()">Generate Confirmation</button>
 
   <div class="generated-details" id="generated-details">
     <h3>Generated Confirmation Details:</h3>
     <p><strong>MC#:</strong> <span id="generated-mc"></span></p>
     <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
     <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
-    <!-- Only display start/expiration date for Shipper/Broker role -->
-    <div id="start-expiration" style="display:none;">
-      <p><strong>Start Date:</strong> <span id="generated-start-date"></span></p>
-      <p><strong>Expiration Date:</strong> <span id="generated-expiration-date"></span></p>
-    </div>
     <p><strong>Status:</strong> <span id="generated-status"></span></p>
   </div>
 
   <div class="actions">
-    <button onclick="sendLink()">📧 Email Code</button>
-    <button onclick="textLink()">📱 Text Code</button>
+    <button onclick="sendLink()">📧 Email Confirmation</button>
+    <button onclick="textLink()">📱 Text Confirmation</button>
   </div>
 
   <script>
@@ -109,16 +104,6 @@
       }
       document.getElementById("generated-status").textContent = status;
 
-      // Only show start/expiration for Broker/Shipper roles
-      const role = "shipper"; // Assuming role is set dynamically (could be based on login)
-      if (role === "shipper" || role === "broker") {
-        document.getElementById("start-expiration").style.display = "block";
-        document.getElementById("generated-start-date").textContent = start;
-        document.getElementById("generated-expiration-date").textContent = expiration;
-      } else {
-        document.getElementById("start-expiration").style.display = "none";
-      }
-
       // Show the generated details
       document.getElementById("generated-details").style.display = "block";
     }
@@ -127,11 +112,9 @@
       const load = document.getElementById("loadId").value;
       const mc = document.getElementById("mc").value;
       const phone = formatPhone(document.getElementById("phone").value);
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
 
-      const subject = encodeURIComponent("Your Truck/Driver Confirmation Code");
-      const body = encodeURIComponent(`Click the link or call the driver:\nMC#: ${mc}\nPhone: ${phone}\nLoad: ${load}\nStart: ${start}\nExpiration: ${expiration}`);
+      const subject = encodeURIComponent("Your Truck/Driver Confirmation");
+      const body = encodeURIComponent(`Click the link or call the driver:\nMC#: ${mc}\nPhone: ${phone}\nLoad: ${load}`);
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }
 
@@ -139,10 +122,8 @@
       const load = document.getElementById("loadId").value;
       const mc = document.getElementById("mc").value;
       const phone = formatPhone(document.getElementById("phone").value);
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
 
-      const smsMessage = encodeURIComponent(`Truck/Driver Confirmation:\nMC#: ${mc}\nPhone: ${phone}\nLoad: ${load}\nStart: ${start}\nExpiration: ${expiration}`);
+      const smsMessage = encodeURIComponent(`Truck/Driver Confirmation:\nMC#: ${mc}\nPhone: ${phone}\nLoad: ${load}`);
       window.location.href = `sms:?body=${smsMessage}`;
     }
   </script>
