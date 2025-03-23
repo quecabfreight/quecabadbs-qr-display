@@ -118,8 +118,9 @@
     </div>
 
     <div class="actions">
-      <button type="button" onclick="sendLink()">📧 Email Confirmation</button>
-      <button type="button" onclick="textLink()">📱 Text Confirmation</button>
+      <!-- Initially hidden options, now only visible after TDC is generated -->
+      <button type="button" id="emailButton" onclick="sendLink()" style="display:none;">📧 Email Confirmation</button>
+      <button type="button" id="textButton" onclick="textLink()" style="display:none;">📱 Text Confirmation</button>
     </div>
   </div>
 
@@ -149,6 +150,10 @@
 
       // Show the generated details
       document.getElementById("generated-details").style.display = "block";
+
+      // Show Email/Text buttons after TDC is generated
+      document.getElementById("emailButton").style.display = "inline-block";
+      document.getElementById("textButton").style.display = "inline-block";
     });
 
     function formatPhone(phone) {
