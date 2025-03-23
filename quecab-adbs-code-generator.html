@@ -108,11 +108,12 @@
       <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
       <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
       <p><strong>Status:</strong> <span id="generated-status"></span></p>
-    </div>
-
-    <div class="actions">
-      <button onclick="sendLink()">📧 Email Confirmation</button>
-      <button onclick="textLink()">📱 Text Confirmation</button>
+      
+      <!-- Show actions only after confirmation is generated -->
+      <div class="actions" id="confirmation-actions">
+        <button onclick="sendLink()">📧 Email Confirmation</button>
+        <button onclick="textLink()">📱 Text Confirmation</button>
+      </div>
     </div>
   </div>
 
@@ -149,6 +150,9 @@
 
       // Show the generated details
       document.getElementById("generated-details").style.display = "block";
+
+      // Show email/text buttons only after confirmation is generated
+      document.getElementById("confirmation-actions").style.display = "block";
     }
 
     function sendLink() {
