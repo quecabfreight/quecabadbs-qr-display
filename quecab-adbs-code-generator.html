@@ -7,12 +7,26 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background: #f9f9f9;
       padding: 30px;
-      text-align: center;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
     }
     h1 {
       color: #003366;
+      text-align: center;
+      font-size: 24px;
     }
     label {
       display: block;
@@ -23,54 +37,83 @@
       padding: 10px;
       margin: 8px 0;
       font-size: 16px;
-      width: 300px;
-      max-width: 90%;
+      width: 100%;
+      max-width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #003366;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #002147;
     }
     .actions {
+      text-align: center;
       margin-top: 20px;
     }
     .actions button {
       margin: 5px;
+      width: 45%;
     }
     .generated-details {
       margin-top: 20px;
-      text-align: left;
       display: none;
+      text-align: left;
+      border-top: 2px solid #003366;
+      padding-top: 15px;
+    }
+    .generated-details p {
+      margin: 10px 0;
+    }
+    .generated-details a {
+      color: #003366;
+      text-decoration: none;
+    }
+    .generated-details a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <h1>Truck/Driver Confirmation</h1>
 
-  <label for="loadId">Load ID:</label>
-  <input type="text" id="loadId" placeholder="Enter Load ID" required />
+  <div class="container">
+    <h1>Truck/Driver Confirmation</h1>
 
-  <label for="mc">Truck MC#:</label>
-  <input type="text" id="mc" placeholder="Enter Truck MC#" required />
+    <label for="loadId">Load ID:</label>
+    <input type="text" id="loadId" placeholder="Enter Load ID" required />
 
-  <label for="phone">Driver Phone:</label>
-  <input type="tel" id="phone" placeholder="123-456-7890" required />
+    <label for="mc">Truck MC#:</label>
+    <input type="text" id="mc" placeholder="Enter Truck MC#" required />
 
-  <label for="start">Start Time:</label>
-  <input type="datetime-local" id="start" required />
+    <label for="phone">Driver Phone:</label>
+    <input type="tel" id="phone" placeholder="123-456-7890" required />
 
-  <label for="expiration">Expiration Time:</label>
-  <input type="datetime-local" id="expiration" required />
+    <label for="start">Start Time:</label>
+    <input type="datetime-local" id="start" required />
 
-  <br/><br/>
-  <button onclick="generate()">Generate Confirmation</button>
+    <label for="expiration">Expiration Time:</label>
+    <input type="datetime-local" id="expiration" required />
 
-  <div class="generated-details" id="generated-details">
-    <h3>Generated Confirmation Details:</h3>
-    <p><strong>MC#:</strong> <span id="generated-mc"></span></p>
-    <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
-    <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
-    <p><strong>Status:</strong> <span id="generated-status"></span></p>
-  </div>
+    <button onclick="generate()">Generate Confirmation</button>
 
-  <div class="actions">
-    <button onclick="sendLink()">📧 Email Confirmation</button>
-    <button onclick="textLink()">📱 Text Confirmation</button>
+    <div class="generated-details" id="generated-details">
+      <h3>Generated Confirmation Details:</h3>
+      <p><strong>MC#:</strong> <span id="generated-mc"></span></p>
+      <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
+      <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
+      <p><strong>Status:</strong> <span id="generated-status"></span></p>
+    </div>
+
+    <div class="actions">
+      <button onclick="sendLink()">📧 Email Confirmation</button>
+      <button onclick="textLink()">📱 Text Confirmation</button>
+    </div>
   </div>
 
   <script>
