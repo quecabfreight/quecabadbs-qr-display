@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>QueCab AdbS Code Generator</title>
+  <title>Truck/Driver Confirmation</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -26,28 +26,21 @@
       width: 300px;
       max-width: 90%;
     }
-    .qr-preview {
-      margin-top: 30px;
-    }
-    .qr-wrapper {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    img {
-      width: 250px;
-      height: 250px;
-    }
     .actions {
       margin-top: 20px;
     }
     .actions button {
       margin: 5px;
     }
+    .generated-details {
+      margin-top: 20px;
+      text-align: left;
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <h1>QueCab AdbS Code Generator</h1>
+  <h1>Truck/Driver Confirmation</h1>
 
   <label for="loadId">Load ID:</label>
   <input type="text" id="loadId" placeholder="Enter Load ID" required />
@@ -59,23 +52,27 @@
   <input type="tel" id="phone" placeholder="123-456-7890" required />
 
   <label for="start">Start Time:</label>
-  <input type="datetime-local" id="start" />
+  <input type="datetime-local" id="start" required />
 
   <label for="expiration">Expiration Time:</label>
-  <input type="datetime-local" id="expiration" />
+  <input type="datetime-local" id="expiration" required />
 
   <br/><br/>
-  <button onclick="generate()">Generate Code</button>
+  <button onclick="generate()">Generate Confirmation Code</button>
 
-  <div class="qr-preview" id="qrPreview" style="display:none;">
-    <h3>Your QueCab AdbS Code</h3>
-    <div class="qr-wrapper">
-      <img id="qrImage" src="" alt="QR Code" />
-    </div>
-    <div class="actions">
-      <button onclick="sendLink()">📧 Email Code</button>
-      <button onclick="textLink()">📱 Text Code</button>
-    </div>
+  <div class="generated-details" id="generated-details">
+    <h3>Generated Confirmation Details:</h3>
+    <p><strong>MC#:</strong> <span id="generated-mc"></span></p>
+    <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
+    <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
+    <p><strong>Start Date:</strong> <span id="generated-start-date"></span></p>
+    <p><strong>Expiration Date:</strong> <span id="generated-expiration-date"></span></p>
+    <p><strong>Status:</strong> <span id="generated-status"></span></p>
+  </div>
+
+  <div class="actions">
+    <button onclick="sendLink()">📧 Email Code</button>
+    <button onclick="textLink()">📱 Text Code</button>
   </div>
 
   <script>
@@ -91,11 +88,28 @@
       const start = document.getElementById("start").value;
       const expiration = document.getElementById("expiration").value;
 
-      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
-      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
+      // Display generated details
+      document.getElementById("generated-mc").textContent = mc;
+      document.getElementById("generated-load-id").textContent = load;
+      document.getElementById("generated-start-date").textContent = start;
+      document.getElementById("generated-expiration-date").textContent = expiration;
 
-      document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
-      document.getElementById("qrPreview").style.display = "block";
+      // Set the phone link
+      const phoneLink = "tel:" + phone;
+      document.getElementById("driver-phone-link").setAttribute("href", phoneLink);
+      document.getElementById("driver-phone-link").textContent = phone;
+
+      // Set the status based on expiration
+      const currentDate = new Date();
+      const expDate = new Date(expiration);
+      let status = 'Active';
+      if (currentDate > expDate) {
+        status = 'Expired';
+      }
+      document.getElementById("generated-status").textContent = status;
+
+      // Show the generated details
+      document.getElementById("generated-details").style.display = "block";
     }
 
     function sendLink() {
@@ -105,11 +119,8 @@
       const start = document.getElementById("start").value;
       const expiration = document.getElementById("expiration").value;
 
-      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
-      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
-
-      const subject = encodeURIComponent("Your QueCab AdbS Code");
-      const body = encodeURIComponent(`Scan this code or click the link below to view load details:\n${url}`);
+      const subject = encodeURIComponent("Your Truck/Driver Confirmation Code");
+      const body = encodeURIComponent(`Click the link or call the driver:\nMC#: ${mc}\nPhone: ${phone}\nLoad: ${load}\nStart: ${start}\nExpiration: ${expiration}`);
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }
 
@@ -120,13 +131,10 @@
       const start = document.getElementById("start").value;
       const expiration = document.getElementById("expiration").value;
 
-      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
-      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
-
-      // Use SMS URL
-      const smsMessage = encodeURIComponent(`Your QueCab AdbS Code:\n${url}`);
+      const smsMessage = encodeURIComponent(`Truck/Driver Confirmation:\nMC#: ${mc}\nPhone: ${phone}\nLoad: ${load}\nStart: ${start}\nExpiration: ${expiration}`);
       window.location.href = `sms:?body=${smsMessage}`;
     }
   </script>
+
 </body>
 </html>
