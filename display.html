@@ -30,12 +30,10 @@
     .label {
       font-weight: bold;
     }
-    .qr {
-      margin-top: 25px;
-    }
     .qr img {
       display: block;
-      margin: 0 auto;
+      margin: 20px auto;
+      max-width: 300px;
     }
     .prompt {
       margin-top: 30px;
@@ -55,8 +53,6 @@
     <h1>QueCab AdbS Code</h1>
     <div class="info"><span class="label">Load ID:</span> <span id="loadId">N/A</span></div>
     <div class="info"><span class="label">Truck MC#:</span> <span id="mc">N/A</span></div>
-    <div class="info"><span class="label">Start:</span> <span id="start">N/A</span></div>
-    <div class="info"><span class="label">Expiration:</span> <span id="expiration">N/A</span></div>
     <div class="prompt">DOES THE MC# MATCH?</div>
     <div class="prompt">DID THE DRIVER ANSWER THEIR PHONE?</div>
     <div class="phone"><a id="phone" href="#">Driver Phone</a></div>
@@ -70,23 +66,21 @@
     const mc = params.get('mc');
     const phone = params.get('phone');
     const load = params.get('load');
-    const start = params.get('start');
-    const expiration = params.get('expiration');
 
-    if (mc) document.getElementById("mc").textContent = mc;
     if (load) document.getElementById("loadId").textContent = load;
-    if (start) document.getElementById("start").textContent = new Date(start).toLocaleString();
-    if (expiration) document.getElementById("expiration").textContent = new Date(expiration).toLocaleString();
+    if (mc) document.getElementById("mc").textContent = mc;
 
     const phoneLink = document.getElementById("phone");
     if (phone) {
-      phoneLink.textContent = phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+      const formattedPhone = phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+      phoneLink.textContent = formattedPhone;
       phoneLink.href = `tel:${phone}`;
     }
 
     if (load && mc && phone) {
       const qrData = `Load:${load}, MC:${mc}, Phone:${phone}`;
-      document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+      document.getElementById("qrImage").src =
+        `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
     }
   </script>
 </body>
