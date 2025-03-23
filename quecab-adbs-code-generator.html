@@ -1,44 +1,136 @@
-function sendLink() {
-  const load = document.getElementById("loadId").value;
-  const mc = document.getElementById("mc").value;
-  const phone = formatPhone(document.getElementById("phone").value);
-  const companyName = document.getElementById("company-name").value;
-  const start = document.getElementById("start").value;
-  const expiration = document.getElementById("expiration").value;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Truck/Driver Confirmation</title>
+  <style>
+    /* Your existing CSS for styling */
+  </style>
+</head>
+<body>
 
-  // Phone number link (making sure it's a clickable link for email)
-  const phoneLink = "tel:" + phone;
+  <div class="container">
+    <h1>Truck/Driver Confirmation</h1>
 
-  // Email Body (excluding Start and Expiration from email)
-  const subject = encodeURIComponent("Your Truck/Driver Confirmation");
-  const body = encodeURIComponent(
-    `DOES THE MC# MATCH?: ${mc}\n` +
-    `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` +  // Added this
-    `MC#: ${mc}\n` +
-    `Phone: ${phone}\n` +  // Just the plain phone number here (since email clients may not support HTML links well)
-    `Load: ${load}`
-    // We do not include Start/Expiration in the email
-  );
+    <form id="tdc-form">
+      <label for="loadId">Load ID:</label>
+      <input type="text" id="loadId" placeholder="Enter Load ID" required />
 
-  window.location.href = `mailto:?subject=${subject}&body=${body}`;
-}
+      <label for="mc">Truck MC#:</label>
+      <input type="text" id="mc" placeholder="Enter Truck MC#" required />
 
-function textLink() {
-  const load = document.getElementById("loadId").value;
-  const mc = document.getElementById("mc").value;
-  const phone = formatPhone(document.getElementById("phone").value);
-  const companyName = document.getElementById("company-name").value;
-  const start = document.getElementById("start").value;
-  const expiration = document.getElementById("expiration").value;
+      <label for="phone">Driver Phone:</label>
+      <input type="tel" id="phone" placeholder="123-456-7890" required />
 
-  const smsMessage = encodeURIComponent(
-    `DOES THE MC# MATCH?: ${mc}\n` +
-    `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` + // Added this
-    `MC#: ${mc}\n` +
-    `Phone: ${phone}\n` +
-    `Load: ${load}`
-    // We do not include Start/Expiration in the text
-  );
+      <label for="company-name">Company Name:</label>
+      <input type="text" id="company-name" placeholder="Enter Company Name" required />
 
-  window.location.href = `sms:?body=${smsMessage}`;
-}
+      <label for="start">Start Time:</label>
+      <input type="datetime-local" id="start" required />
+
+      <label for="expiration">Expiration Time:</label>
+      <input type="datetime-local" id="expiration" required />
+
+      <button type="submit" id="generateTDC">Generate Confirmation</button>
+    </form>
+
+    <div class="generated-details" id="generated-details">
+      <h3>Generated Confirmation Details:</h3>
+      <p><strong>DOES THE MC# MATCH?:</strong> <span id="generated-mc"></span></p>
+      <p><strong>DOES THE COMPANY NAME MATCH?:</strong> <span id="generated-company-name"></span></p>
+      <p><strong>MC#:</strong> <span id="generated-mc-display"></span></p>
+      <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
+      <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
+      <p><strong>Start Date:</strong> <span id="generated-start-date"></span></p>
+      <p><strong>Expiration Date:</strong> <span id="generated-expiration-date"></span></p>
+    </div>
+
+    <div class="actions">
+      <!-- These buttons will now correctly trigger the functions -->
+      <button type="button" onclick="sendLink()">📧 Email Confirmation</button>
+      <button type="button" onclick="textLink()">📱 Text Confirmation</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('tdc-form').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      const load = document.getElementById("loadId").value;
+      const mc = document.getElementById("mc").value;
+      const phone = formatPhone(document.getElementById("phone").value);
+      const companyName = document.getElementById("company-name").value;
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
+
+      // Set generated details
+      document.getElementById("generated-mc").textContent = mc;
+      document.getElementById("generated-company-name").textContent = companyName;
+      document.getElementById("generated-mc-display").textContent = mc;
+      document.getElementById("generated-load-id").textContent = load;
+      document.getElementById("generated-start-date").textContent = start;
+      document.getElementById("generated-expiration-date").textContent = expiration;
+
+      // Phone link
+      const phoneLink = "tel:" + phone;
+      document.getElementById("driver-phone-link").setAttribute("href", phoneLink);
+      document.getElementById("driver-phone-link").textContent = phone;
+
+      // Show the generated details
+      document.getElementById("generated-details").style.display = "block";
+    });
+
+    function formatPhone(phone) {
+      return phone.replace(/\D/g, '')
+        .replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+    }
+
+    function sendLink() {
+      const load = document.getElementById("loadId").value;
+      const mc = document.getElementById("mc").value;
+      const phone = formatPhone(document.getElementById("phone").value);
+      const companyName = document.getElementById("company-name").value;
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
+
+      // Phone number link (making sure it's a clickable link for email)
+      const phoneLink = "tel:" + phone;
+
+      // Email Body (excluding Start and Expiration from email)
+      const subject = encodeURIComponent("Your Truck/Driver Confirmation");
+      const body = encodeURIComponent(
+        `DOES THE MC# MATCH?: ${mc}\n` +
+        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` +
+        `MC#: ${mc}\n` +
+        `Phone: ${phone}\n` +  // Just the plain phone number here (since email clients may not support HTML links well)
+        `Load: ${load}`
+        // We do not include Start/Expiration in the email
+      );
+
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    function textLink() {
+      const load = document.getElementById("loadId").value;
+      const mc = document.getElementById("mc").value;
+      const phone = formatPhone(document.getElementById("phone").value);
+      const companyName = document.getElementById("company-name").value;
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
+
+      const smsMessage = encodeURIComponent(
+        `DOES THE MC# MATCH?: ${mc}\n` +
+        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` + 
+        `MC#: ${mc}\n` +
+        `Phone: ${phone}\n` +
+        `Load: ${load}`
+        // We do not include Start/Expiration in the text
+      );
+
+      window.location.href = `sms:?body=${smsMessage}`;
+    }
+  </script>
+
+</body>
+</html>
