@@ -65,8 +65,11 @@
     <p><strong>MC#:</strong> <span id="generated-mc"></span></p>
     <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
     <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
-    <p><strong>Start Date:</strong> <span id="generated-start-date"></span></p>
-    <p><strong>Expiration Date:</strong> <span id="generated-expiration-date"></span></p>
+    <!-- Only display start/expiration date for Shipper/Broker role -->
+    <div id="start-expiration" style="display:none;">
+      <p><strong>Start Date:</strong> <span id="generated-start-date"></span></p>
+      <p><strong>Expiration Date:</strong> <span id="generated-expiration-date"></span></p>
+    </div>
     <p><strong>Status:</strong> <span id="generated-status"></span></p>
   </div>
 
@@ -91,10 +94,8 @@
       // Display generated details
       document.getElementById("generated-mc").textContent = mc;
       document.getElementById("generated-load-id").textContent = load;
-      document.getElementById("generated-start-date").textContent = start;
-      document.getElementById("generated-expiration-date").textContent = expiration;
 
-      // Set the phone link
+      // Set the phone link to dial the driver
       const phoneLink = "tel:" + phone;
       document.getElementById("driver-phone-link").setAttribute("href", phoneLink);
       document.getElementById("driver-phone-link").textContent = phone;
@@ -107,6 +108,16 @@
         status = 'Expired';
       }
       document.getElementById("generated-status").textContent = status;
+
+      // Only show start/expiration for Broker/Shipper roles
+      const role = "shipper"; // Assuming role is set dynamically (could be based on login)
+      if (role === "shipper" || role === "broker") {
+        document.getElementById("start-expiration").style.display = "block";
+        document.getElementById("generated-start-date").textContent = start;
+        document.getElementById("generated-expiration-date").textContent = expiration;
+      } else {
+        document.getElementById("start-expiration").style.display = "none";
+      }
 
       // Show the generated details
       document.getElementById("generated-details").style.display = "block";
