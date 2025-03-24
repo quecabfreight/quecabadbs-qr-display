@@ -91,11 +91,11 @@
       <label for="mc">Truck MC#:</label>
       <input type="text" id="mc" placeholder="Enter Truck MC#" required />
 
-      <label for="phone">Driver Phone:</label>
-      <input type="tel" id="phone" placeholder="123-456-7890" required />
-
       <label for="company-name">Company Name:</label>
       <input type="text" id="company-name" placeholder="Enter Company Name" required />
+
+      <label for="phone">Driver Phone:</label>
+      <input type="tel" id="phone" placeholder="123-456-7890" required />
 
       <label for="start">Start Time:</label>
       <input type="datetime-local" id="start" required />
@@ -111,6 +111,7 @@
       <p><strong>DOES THE MC# MATCH?:</strong> <span id="generated-mc"></span></p> <!-- Added this -->
       <p><strong>DOES THE COMPANY NAME MATCH?:</strong> <span id="generated-company-name"></span></p> <!-- Added this -->
       <p><strong>MC#:</strong> <span id="generated-mc-display"></span></p>
+      <p><strong>Company Name:</strong> <span id="generated-company-name-display"></span></p> <!-- Moved Company Name -->
       <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
       <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
       <p><strong>Start Date:</strong> <span id="generated-start-date"></span></p>
@@ -118,7 +119,6 @@
     </div>
 
     <div class="actions">
-      <!-- Initially hidden options, now only visible after TDC is generated -->
       <button type="button" id="emailButton" onclick="sendLink()" style="display:none;">📧 Email Confirmation</button>
       <button type="button" id="textButton" onclick="textLink()" style="display:none;">📱 Text Confirmation</button>
     </div>
@@ -138,6 +138,7 @@
       // Set generated details
       document.getElementById("generated-mc").textContent = mc;
       document.getElementById("generated-company-name").textContent = companyName; // Added
+      document.getElementById("generated-company-name-display").textContent = companyName; // Added this to display the company name
       document.getElementById("generated-mc-display").textContent = mc;
       document.getElementById("generated-load-id").textContent = load;
       document.getElementById("generated-start-date").textContent = start;
