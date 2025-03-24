@@ -111,8 +111,8 @@
       <p><strong>DOES THE MC# MATCH?:</strong> <span id="generated-mc"></span></p> <!-- Added this -->
       <p><strong>DOES THE COMPANY NAME MATCH?:</strong> <span id="generated-company-name"></span></p> <!-- Added this -->
       <p><strong>MC#:</strong> <span id="generated-mc-display"></span></p>
-      <p><strong>Company Name:</strong> <span id="generated-company-name-display"></span></p> <!-- Moved Company Name -->
-      <p><strong>Driver Phone (Clickable):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p>
+      <p><strong>Company Name:</strong> <span id="generated-company-name-display"></span></p> <!-- Company Name Moved -->
+      <p><strong>Driver Phone (Clickable if text):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p> <!-- Updated this -->
       <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
       <p><strong>Start Date:</strong> <span id="generated-start-date"></span></p>
       <p><strong>Expiration Date:</strong> <span id="generated-expiration-date"></span></p>
@@ -138,7 +138,7 @@
       // Set generated details
       document.getElementById("generated-mc").textContent = mc;
       document.getElementById("generated-company-name").textContent = companyName; // Added
-      document.getElementById("generated-company-name-display").textContent = companyName; // Added this to display the company name
+      document.getElementById("generated-company-name-display").textContent = companyName; // Display Company Name
       document.getElementById("generated-mc-display").textContent = mc;
       document.getElementById("generated-load-id").textContent = load;
       document.getElementById("generated-start-date").textContent = start;
