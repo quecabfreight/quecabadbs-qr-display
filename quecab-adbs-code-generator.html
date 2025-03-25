@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Truck/Driver Confirmation (TDC)</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script> <!-- QR Code Library -->
+  <title>Truck/Driver Confirmation (TDC) - Dock Check-in</title>
+
   <style>
-    /* Your styles here */
     body {
       font-family: Arial, sans-serif;
       background-color: #f9f9f9;
@@ -21,64 +20,40 @@
       max-width: 600px;
       margin: 0 auto;
     }
-    .qr-code {
+    .qr-code-info {
       text-align: center;
       margin-top: 20px;
     }
-    button {
-      background-color: #003366;
-      color: white;
-      padding: 10px;
-      border: none;
-      cursor: pointer;
-      width: 100%;
+    .qr-code-info p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .driver-phone {
+      font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Truck/Driver Confirmation</h1>
+    <h1>Truck/Driver Confirmation (TDC) - Dock Check-in</h1>
 
-    <label for="loadId">Load Number:</label>
-    <input type="text" id="loadId" placeholder="Enter Load Number" required />
-    
-    <label for="companyName">Company Name:</label>
-    <input type="text" id="companyName" placeholder="Enter Company Name" required />
+    <!-- Display QR Code Information -->
+    <div class="qr-code-info">
+      <p><strong>Load Number: </strong> <span id="loadNumber">123456</span></p>
+      <p><strong>Company Name: </strong> <span id="companyName">ABC Trucking</span></p>
+      
+      <p><strong>DOES THE MC# MATCH?</strong></p> 
+      <!-- The staff will visually verify if the MC# matches here -->
 
-    <label for="driverPhone">Driver Phone:</label>
-    <input type="tel" id="driverPhone" placeholder="Enter Driver Phone (1234567890)" required />
+      <p><strong>DID THE DRIVER ANSWER THEIR PHONE?</strong></p>
+      <!-- The staff will manually verify if the driver answered the phone -->
 
-    <button id="generateTDC">Generate QR Code</button>
-
-    <div class="qr-code" id="qrCodeContainer"></div>
+      <p class="driver-phone"><strong>Driver Phone: </strong><span id="driverPhone">1234567890</span></p>
+      <!-- The phone number will appear in 1234567890 format -->
+    </div>
   </div>
 
-  <script>
-    document.getElementById("generateTDC").addEventListener("click", function() {
-      const loadId = document.getElementById("loadId").value;
-      const companyName = document.getElementById("companyName").value;
-      const driverPhone = document.getElementById("driverPhone").value;
-
-      // Prepare the QR Code data
-      const qrData = `Load Number: ${loadId}\nCompany: ${companyName}\nPhone: ${driverPhone}`;
-
-      // Generate QR Code
-      QRCode.toCanvas(document.getElementById('qrCodeContainer'), qrData, function(error) {
-        if (error) {
-          console.error("QR Code generation failed:", error);
-        } else {
-          console.log("QR Code generated successfully");
-        }
-      });
-
-      // Prepare Email/Text content
-      const subject = "Truck/Driver Confirmation";
-      const body = `QR Code for Load: ${loadId}\nCompany: ${companyName}\nDriver Phone: ${driverPhone}`;
-      
-      // Email link (for sending QR code)
-      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    });
-  </script>
 </body>
 </html>
