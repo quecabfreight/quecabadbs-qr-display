@@ -32,18 +32,6 @@
       cursor: pointer;
       width: 100%;
     }
-    .qr-code-info {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .qr-code-info p {
-      font-size: 18px;
-      margin: 10px 0;
-    }
-    .driver-phone {
-      font-size: 18px;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
@@ -52,8 +40,8 @@
     <h1>Truck/Driver Confirmation (TDC)</h1>
 
     <!-- Input Fields for Load Details -->
-    <label for="loadId">Load Number:</label>
-    <input type="text" id="loadId" placeholder="Enter Load Number" required />
+    <label for="loadId">Load ID:</label>
+    <input type="text" id="loadId" placeholder="Enter Load ID" required />
     
     <label for="mc">Truck MC#:</label>
     <input type="text" id="mc" placeholder="Enter Truck MC#" required />
@@ -62,22 +50,17 @@
     <input type="text" id="companyName" placeholder="Enter Company Name" required />
 
     <label for="driverPhone">Driver Phone:</label>
-    <input type="tel" id="driverPhone" placeholder="Enter Driver Phone (1234567890)" required />
+    <input type="tel" id="driverPhone" placeholder="123-456-7890" required />
 
-    <button id="generateTDC">Generate QR Code</button>
+    <label for="start">Start Time:</label>
+    <input type="datetime-local" id="start" required />
+
+    <label for="expiration">Expiration Time:</label>
+    <input type="datetime-local" id="expiration" required />
+
+    <button id="generateTDC">Generate Confirmation</button>
 
     <div class="qr-code" id="qrCodeContainer"></div>
-
-    <!-- Display QR Code Information After Scanning -->
-    <div class="qr-code-info" id="qrDisplay" style="display: none;">
-      <p><strong>Load Number: </strong> <span id="displayLoadNumber">123456</span></p>
-      <p><strong>Company Name: </strong> <span id="displayCompanyName">ABC Trucking</span></p>
-      
-      <p><strong>DOES THE MC# MATCH?</strong></p>
-      <p><strong>DID THE DRIVER ANSWER THEIR PHONE?</strong></p>
-
-      <p class="driver-phone"><strong>Driver Phone: </strong><span id="displayDriverPhone">1234567890</span></p>
-    </div>
   </div>
 
   <script>
@@ -86,9 +69,11 @@
       const mc = document.getElementById("mc").value;
       const companyName = document.getElementById("companyName").value;
       const driverPhone = document.getElementById("driverPhone").value;
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
 
       // Prepare the QR Code data
-      const qrData = `Load Number: ${loadId}\nMC#: ${mc}\nCompany: ${companyName}\nPhone: ${driverPhone}`;
+      const qrData = `Load ID: ${loadId}\nMC#: ${mc}\nCompany: ${companyName}\nPhone: ${driverPhone}\nStart: ${start}\nExpiration: ${expiration}`;
 
       // Generate QR Code
       QRCode.toCanvas(document.getElementById('qrCodeContainer'), qrData, function(error) {
@@ -101,16 +86,10 @@
 
       // Prepare Email/Text content
       const subject = "Truck/Driver Confirmation";
-      const body = `QR Code for Load: ${loadId}\nMC#: ${mc}\nCompany: ${companyName}\nDriver Phone: ${driverPhone}`;
+      const body = `QR Code for Load: ${loadId}\nMC#: ${mc}\nCompany: ${companyName}\nDriver Phone: ${driverPhone}\nStart: ${start}\nExpiration: ${expiration}`;
       
       // Email link (for sending QR code)
       window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-      // Show the dock screen display (after QR code generation)
-      document.getElementById("qrDisplay").style.display = "block";
-      document.getElementById("displayLoadNumber").textContent = loadId;
-      document.getElementById("displayCompanyName").textContent = companyName;
-      document.getElementById("displayDriverPhone").textContent = driverPhone;
     });
   </script>
 
