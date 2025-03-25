@@ -3,79 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Truck/Driver Confirmation</title>
+  <title>Truck/Driver Confirmation (TDC)</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script> <!-- QR Code Library -->
   <style>
+    /* Your styles here */
     body {
       font-family: Arial, sans-serif;
-      background: #f9f9f9;
+      background-color: #f9f9f9;
       padding: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
     }
     .container {
-      background: white;
-      padding: 30px;
+      background-color: white;
+      padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       width: 100%;
       max-width: 600px;
+      margin: 0 auto;
     }
-    h1 {
-      color: #003366;
+    .qr-code {
       text-align: center;
-      font-size: 24px;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 15px;
-    }
-    input, select, button {
-      padding: 10px;
-      margin: 8px 0;
-      font-size: 16px;
-      width: 100%;
-      max-width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      margin-top: 20px;
     }
     button {
       background-color: #003366;
       color: white;
+      padding: 10px;
       border: none;
       cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #002147;
-    }
-    .actions {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .actions button {
-      margin: 5px;
-      width: 45%;
-    }
-    .generated-details {
-      margin-top: 20px;
-      display: none;
-      text-align: left;
-      border-top: 2px solid #003366;
-      padding-top: 15px;
-    }
-    .generated-details p {
-      margin: 10px 0;
-    }
-    .generated-details a {
-      color: #003366;
-      text-decoration: none;
-    }
-    .generated-details a:hover {
-      text-decoration: underline;
+      width: 100%;
     }
   </style>
 </head>
@@ -84,128 +40,45 @@
   <div class="container">
     <h1>Truck/Driver Confirmation</h1>
 
-    <form id="tdc-form">
-      <label for="loadId">Load ID:</label>
-      <input type="text" id="loadId" placeholder="Enter Load ID" required />
+    <label for="loadId">Load Number:</label>
+    <input type="text" id="loadId" placeholder="Enter Load Number" required />
+    
+    <label for="companyName">Company Name:</label>
+    <input type="text" id="companyName" placeholder="Enter Company Name" required />
 
-      <label for="mc">Truck MC#:</label>
-      <input type="text" id="mc" placeholder="Enter Truck MC#" required />
+    <label for="driverPhone">Driver Phone:</label>
+    <input type="tel" id="driverPhone" placeholder="Enter Driver Phone (1234567890)" required />
 
-      <label for="company-name">Company Name:</label>
-      <input type="text" id="company-name" placeholder="Enter Company Name" required />
+    <button id="generateTDC">Generate QR Code</button>
 
-      <label for="phone">Driver Phone:</label>
-      <input type="tel" id="phone" placeholder="123-456-7890" required />
-
-      <label for="start">Start Time:</label>
-      <input type="datetime-local" id="start" required />
-
-      <label for="expiration">Expiration Time:</label>
-      <input type="datetime-local" id="expiration" required />
-
-      <button type="submit">Generate Confirmation</button>
-    </form>
-
-    <div class="generated-details" id="generated-details">
-      <h3>Generated Confirmation Details:</h3>
-      <p><strong>DOES THE MC# MATCH?:</strong> <span id="generated-mc"></span></p> <!-- Added this -->
-      <p><strong>DOES THE COMPANY NAME MATCH?:</strong> <span id="generated-company-name"></span></p> <!-- Added this -->
-      <p><strong>MC#:</strong> <span id="generated-mc-display"></span></p>
-      <p><strong>Company Name:</strong> <span id="generated-company-name-display"></span></p> <!-- Company Name Moved -->
-      <p><strong>Driver Phone (Clickable if text):</strong> <a id="driver-phone-link" href="#" target="_blank">Call Driver</a></p> <!-- Updated this -->
-      <p><strong>Load ID:</strong> <span id="generated-load-id"></span></p>
-      <p><strong>Start Date:</strong> <span id="generated-start-date"></span></p>
-      <p><strong>Expiration Date:</strong> <span id="generated-expiration-date"></span></p>
-    </div>
-
-    <div class="actions">
-      <button type="button" id="emailButton" onclick="sendLink()" style="display:none;">📧 Email Confirmation</button>
-      <button type="button" id="textButton" onclick="textLink()" style="display:none;">📱 Text Confirmation</button>
-    </div>
+    <div class="qr-code" id="qrCodeContainer"></div>
   </div>
 
   <script>
-    document.getElementById('tdc-form').addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevent the default form submission
+    document.getElementById("generateTDC").addEventListener("click", function() {
+      const loadId = document.getElementById("loadId").value;
+      const companyName = document.getElementById("companyName").value;
+      const driverPhone = document.getElementById("driverPhone").value;
 
-      const load = document.getElementById("loadId").value;
-      const mc = document.getElementById("mc").value;
-      const phone = formatPhone(document.getElementById("phone").value);
-      const companyName = document.getElementById("company-name").value;
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
+      // Prepare the QR Code data
+      const qrData = `Load Number: ${loadId}\nCompany: ${companyName}\nPhone: ${driverPhone}`;
 
-      // Set generated details
-      document.getElementById("generated-mc").textContent = mc;
-      document.getElementById("generated-company-name").textContent = companyName; // Added
-      document.getElementById("generated-company-name-display").textContent = companyName; // Display Company Name
-      document.getElementById("generated-mc-display").textContent = mc;
-      document.getElementById("generated-load-id").textContent = load;
-      document.getElementById("generated-start-date").textContent = start;
-      document.getElementById("generated-expiration-date").textContent = expiration;
+      // Generate QR Code
+      QRCode.toCanvas(document.getElementById('qrCodeContainer'), qrData, function(error) {
+        if (error) {
+          console.error("QR Code generation failed:", error);
+        } else {
+          console.log("QR Code generated successfully");
+        }
+      });
 
-      // Phone link
-      const phoneLink = "tel:" + phone;
-      document.getElementById("driver-phone-link").setAttribute("href", phoneLink);
-      document.getElementById("driver-phone-link").textContent = phone;
-
-      // Show the generated details
-      document.getElementById("generated-details").style.display = "block";
-
-      // Show Email/Text buttons after TDC is generated
-      document.getElementById("emailButton").style.display = "inline-block";
-      document.getElementById("textButton").style.display = "inline-block";
+      // Prepare Email/Text content
+      const subject = "Truck/Driver Confirmation";
+      const body = `QR Code for Load: ${loadId}\nCompany: ${companyName}\nDriver Phone: ${driverPhone}`;
+      
+      // Email link (for sending QR code)
+      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
-
-    function formatPhone(phone) {
-      return phone.replace(/\D/g, '')
-        .replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-    }
-
-    function sendLink() {
-      const load = document.getElementById("loadId").value;
-      const mc = document.getElementById("mc").value;
-      const phone = formatPhone(document.getElementById("phone").value);
-      const companyName = document.getElementById("company-name").value;
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
-
-      const phoneLink = "tel:" + phone;
-
-      // Email Body (excluding Start and Expiration from email)
-      const subject = encodeURIComponent("Your Truck/Driver Confirmation");
-      const body = encodeURIComponent(
-        `DOES THE MC# MATCH?: ${mc}\n` +
-        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` +
-        `MC#: ${mc}\n` +
-        `Phone: ${phone}\n` +  // Just the plain phone number here (since email clients may not support HTML links well)
-        `Load: ${load}`
-        // We do not include Start/Expiration in the email
-      );
-
-      window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    }
-
-    function textLink() {
-      const load = document.getElementById("loadId").value;
-      const mc = document.getElementById("mc").value;
-      const phone = formatPhone(document.getElementById("phone").value);
-      const companyName = document.getElementById("company-name").value;
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
-
-      const smsMessage = encodeURIComponent(
-        `DOES THE MC# MATCH?: ${mc}\n` +
-        `DOES THE COMPANY NAME MATCH?: ${companyName}\n\n` + 
-        `MC#: ${mc}\n` +
-        `Phone: ${phone}\n` +
-        `Load: ${load}`
-        // We do not include Start/Expiration in the text
-      );
-
-      window.location.href = `sms:?body=${smsMessage}`;
-    }
   </script>
-
 </body>
 </html>
