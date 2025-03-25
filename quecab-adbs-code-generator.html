@@ -3,87 +3,130 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Truck/Driver Confirmation (TDC)</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script> <!-- QR Code Library -->
+  <title>QueCab AdbS Code Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
+      background: #f4f4f4;
       padding: 30px;
-    }
-    .container {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .qr-code {
       text-align: center;
+    }
+    h1 {
+      color: #003366;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+      width: 300px;
+      max-width: 90%;
+    }
+    .qr-preview {
+      margin-top: 30px;
+    }
+    .qr-wrapper {
+      display: flex;
+      justify-content: center;
       margin-top: 20px;
     }
-    button {
-      background-color: #003366;
-      color: white;
-      padding: 10px;
-      border: none;
-      cursor: pointer;
-      width: 100%;
+    img {
+      width: 250px;
+      height: 250px;
+    }
+    .actions {
+      margin-top: 20px;
+    }
+    .actions button {
+      margin: 5px;
     }
   </style>
 </head>
 <body>
+  <h1>QueCab AdbS Code Generator</h1>
 
-  <div class="container">
-    <h1>Truck/Driver Confirmation (TDC)</h1>
+  <label for="loadId">Load ID:</label>
+  <input type="text" id="loadId" placeholder="Enter Load ID" required />
 
-    <!-- Input Fields for Load Details -->
-    <label for="loadId">Load ID:</label>
-    <input type="text" id="loadId" placeholder="Enter Load ID" required />
-    
-    <label for="mc">Truck MC#:</label>
-    <input type="text" id="mc" placeholder="Enter Truck MC#" required />
+  <label for="mc">Truck MC#:</label>
+  <input type="text" id="mc" placeholder="Enter Truck MC#" required />
 
-    <label for="companyName">Company Name:</label>
-    <input type="text" id="companyName" placeholder="Enter Company Name" required />
+  <label for="phone">Driver Phone:</label>
+  <input type="tel" id="phone" placeholder="123-456-7890" required />
 
-    <label for="driverPhone">Driver Phone:</label>
-    <input type="tel" id="driverPhone" placeholder="123-456-7890" required />
+  <label for="start">Start Time:</label>
+  <input type="datetime-local" id="start" />
 
-    <button id="generateTDC">Generate Confirmation</button>
+  <label for="expiration">Expiration Time:</label>
+  <input type="datetime-local" id="expiration" />
 
-    <div class="qr-code" id="qrCodeContainer"></div>
+  <br/><br/>
+  <button onclick="generate()">Generate Code</button>
+
+  <div class="qr-preview" id="qrPreview" style="display:none;">
+    <h3>Your QueCab AdbS Code</h3>
+    <div class="qr-wrapper">
+      <img id="qrImage" src="" alt="QR Code" />
+    </div>
+    <div class="actions">
+      <button onclick="sendLink()">📧 Email Code</button>
+      <button onclick="textLink()">📱 Text Code</button>
+    </div>
   </div>
 
   <script>
-    document.getElementById("generateTDC").addEventListener("click", function() {
-      const loadId = document.getElementById("loadId").value;
+    function formatPhone(phone) {
+      return phone.replace(/\D/g, '')
+        .replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+    }
+
+    function generate() {
+      const load = document.getElementById("loadId").value;
       const mc = document.getElementById("mc").value;
-      const companyName = document.getElementById("companyName").value;
-      const driverPhone = document.getElementById("driverPhone").value;
+      const phone = formatPhone(document.getElementById("phone").value);
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
 
-      // Prepare the QR Code data
-      const qrData = `Load ID: ${loadId}\nMC#: ${mc}\nCompany: ${companyName}\nPhone: ${driverPhone}`;
+      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
+      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
 
-      // Generate QR Code
-      QRCode.toCanvas(document.getElementById('qrCodeContainer'), qrData, function(error) {
-        if (error) {
-          console.error("QR Code generation failed:", error);
-        } else {
-          console.log("QR Code generated successfully");
-        }
-      });
+      document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
+      document.getElementById("qrPreview").style.display = "block";
+    }
 
-      // Prepare Email/Text content
-      const subject = "Truck/Driver Confirmation";
-      const body = `QR Code for Load: ${loadId}\nMC#: ${mc}\nCompany: ${companyName}\nDriver Phone: ${driverPhone}`;
-      
-      // Email link (for sending QR code)
-      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    });
+    function sendLink() {
+      const load = document.getElementById("loadId").value;
+      const mc = document.getElementById("mc").value;
+      const phone = formatPhone(document.getElementById("phone").value);
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
+
+      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
+      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
+
+      const subject = encodeURIComponent("Your QueCab AdbS Code");
+      const body = encodeURIComponent(`Scan this code or click the link below to view load details:\n${url}`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
+
+    function textLink() {
+      const load = document.getElementById("loadId").value;
+      const mc = document.getElementById("mc").value;
+      const phone = formatPhone(document.getElementById("phone").value);
+      const start = document.getElementById("start").value;
+      const expiration = document.getElementById("expiration").value;
+
+      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
+      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(phone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
+
+      // Use SMS URL
+      const smsMessage = encodeURIComponent(`Your QueCab AdbS Code:\n${url}`);
+      window.location.href = `sms:?body=${smsMessage}`;
+    }
   </script>
-
 </body>
 </html>
