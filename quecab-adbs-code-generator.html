@@ -4,10 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Truck/Driver Confirmation (TDC)</title>
-  
-  <!-- QR Code Library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script> <!-- QR Code Library -->
-  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,6 +32,18 @@
       cursor: pointer;
       width: 100%;
     }
+    .qr-code-info {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .qr-code-info p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .driver-phone {
+      font-size: 18px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -58,6 +67,17 @@
     <button id="generateTDC">Generate QR Code</button>
 
     <div class="qr-code" id="qrCodeContainer"></div>
+
+    <!-- Display QR Code Information After Scanning -->
+    <div class="qr-code-info" id="qrDisplay" style="display: none;">
+      <p><strong>Load Number: </strong> <span id="displayLoadNumber">123456</span></p>
+      <p><strong>Company Name: </strong> <span id="displayCompanyName">ABC Trucking</span></p>
+      
+      <p><strong>DOES THE MC# MATCH?</strong></p>
+      <p><strong>DID THE DRIVER ANSWER THEIR PHONE?</strong></p>
+
+      <p class="driver-phone"><strong>Driver Phone: </strong><span id="displayDriverPhone">1234567890</span></p>
+    </div>
   </div>
 
   <script>
@@ -85,7 +105,14 @@
       
       // Email link (for sending QR code)
       window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      // Show the dock screen display (after QR code generation)
+      document.getElementById("qrDisplay").style.display = "block";
+      document.getElementById("displayLoadNumber").textContent = loadId;
+      document.getElementById("displayCompanyName").textContent = companyName;
+      document.getElementById("displayDriverPhone").textContent = driverPhone;
     });
   </script>
+
 </body>
 </html>
