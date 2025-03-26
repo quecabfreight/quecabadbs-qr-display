@@ -4,236 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Truck/Driver Confirmation</title>
-    <style>
-        /* Basic Styling */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;  /* Increased width for readability */
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 40px;  /* Increased padding for more space */
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        h1 {
-            text-align: center;
-            font-size: 36px;  /* Larger font size for the title */
-            color: #003366;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            font-weight: bold;
-            font-size: 18px;  /* Larger labels */
-        }
-        input[type="text"], input[type="tel"], input[type="date"] {
-            width: 100%;
-            padding: 12px;  /* Increased padding for form elements */
-            margin-top: 8px;
-            font-size: 18px;  /* Larger text size for inputs */
-            border: 1px solid #ddd;
-            border-radius: 6px;
-        }
-        .btn {
-            display: inline-block;
-            background-color: #003366;
-            color: white;
-            padding: 15px 30px;  /* Larger button padding */
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: center;
-            font-size: 20px;  /* Larger font size */
-            margin-top: 20px;
-            width: 100%;
-        }
-        .btn:hover {
-            background-color: #005099;
-        }
-        .hidden {
-            display: none;
-        }
-        .confirmation-display {
-            margin-top: 30px;
-            font-size: 22px;
-            background-color: #003366;
-            color: white;
-            padding: 20px;
-            border-radius: 6px;
-        }
-        #qrCode {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .form-group input[type="tel"] {
-            font-size: 18px;  /* Ensured phone number input is readable */
-        }
-    </style>
+    <link rel="stylesheet" href="style.css"> <!-- Make sure to link to your styles -->
 </head>
 <body>
+    <div class="container">
+        <h2>Truck/Driver Confirmation</h2>
+        
+        <!-- Form Section -->
+        <form id="confirmationForm">
+            <label for="loadId">Load ID:</label>
+            <input type="text" id="loadId" name="loadId" required placeholder="Enter Load ID">
 
-<div class="container">
-    <h1>Truck/Driver Confirmation</h1>
+            <label for="dotNumber">DOT#:</label> <!-- Changed from MC# to DOT# -->
+            <input type="text" id="dotNumber" name="dotNumber" required placeholder="Enter DOT#">
 
-    <!-- Form for Truck & Driver Confirmation -->
-    <form id="tdcForm">
-        <!-- Load ID Field -->
-        <div class="form-group">
-            <label for="loadID">Load ID:</label>
-            <input type="text" id="loadID" placeholder="Enter Load ID" required>
-        </div>
-
-        <!-- Truck MC# Field -->
-        <div class="form-group">
-            <label for="truckMC">Truck MC#:</label>
-            <input type="text" id="truckMC" placeholder="Enter Truck MC#" required>
-        </div>
-
-        <!-- Company Name Field -->
-        <div class="form-group">
             <label for="companyName">Company Name:</label>
-            <input type="text" id="companyName" placeholder="Enter Company Name" required>
-        </div>
+            <input type="text" id="companyName" name="companyName" required placeholder="Enter Company Name">
 
-        <!-- Driver Phone Field -->
-        <div class="form-group">
             <label for="driverPhone">Driver Phone:</label>
-            <input type="tel" id="driverPhone" placeholder="123-456-7890" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
-        </div>
+            <input type="text" id="driverPhone" name="driverPhone" required placeholder="123-456-7890">
 
-        <!-- Start Time Field -->
-        <div class="form-group">
             <label for="startTime">Start Time:</label>
-            <input type="date" id="startTime" required>
-        </div>
+            <input type="date" id="startTime" name="startTime" required>
 
-        <!-- Expiration Time Field -->
-        <div class="form-group">
             <label for="expirationTime">Expiration Time:</label>
-            <input type="date" id="expirationTime" required>
+            <input type="date" id="expirationTime" name="expirationTime" required>
+
+            <button type="button" onclick="generateConfirmation()">Generate Confirmation</button>
+        </form>
+
+        <!-- Confirmation Output Section -->
+        <div id="confirmationDetails" class="confirmationDetails" style="display:none;">
+            <h3>Confirmation Details</h3>
+            <p><strong>Load ID:</strong> <span id="confirmLoadId"></span></p>
+            <p><strong>DOT#:</strong> <span id="confirmDotNumber"></span></p>
+            <p><strong>Company Name:</strong> <span id="confirmCompanyName"></span></p>
+            <p><strong>Driver Phone:</strong> <span id="confirmDriverPhone"></span></p>
+            <p><strong>Start Time:</strong> <span id="confirmStartTime"></span></p>
+            <p><strong>Expiration Time:</strong> <span id="confirmExpirationTime"></span></p>
+
+            <!-- QR Code Section -->
+            <p><strong>QR Code:</strong></p>
+            <img id="qrCodeImage" src="" alt="QR Code" style="width:150px; height:150px;"/>
+
+            <!-- Send options -->
+            <button type="button" onclick="sendConfirmation('email')">Send via Email</button>
+            <button type="button" onclick="sendConfirmation('text')">Send via Text</button>
         </div>
-
-        <!-- Generate Confirmation Button -->
-        <button type="button" class="btn" id="generateConfirmationBtn">Generate Confirmation</button>
-    </form>
-
-    <!-- Display the generated confirmation details -->
-    <div id="confirmationDetails" class="confirmation-display hidden">
-        <p><strong>Load ID:</strong> <span id="confirmationLoadID"></span></p>
-        <p><strong>Truck MC#:</strong> <span id="confirmationTruckMC"></span></p>
-        <p><strong>Company Name:</strong> <span id="confirmationCompanyName"></span></p>
-        <p><strong>Driver Phone:</strong> <a href="tel:" id="confirmationDriverPhone"></a></p>
-        <p><strong>Start Time:</strong> <span id="confirmationStartTime"></span></p>
-        <p><strong>Expiration Time:</strong> <span id="confirmationExpirationTime"></span></p>
-
-        <!-- QR Code Display -->
-        <div id="qrCode"></div>
     </div>
 
-    <!-- Email/Text Options, initially hidden -->
-    <div class="hidden" id="emailTextOptions">
-        <p>Select an option to send the confirmation:</p>
-        <button class="btn" id="sendEmailBtn">Send via Email</button>
-        <button class="btn" id="sendTextBtn">Send via Text</button>
-    </div>
+    <script>
+        // Function to generate confirmation
+        function generateConfirmation() {
+            // Gather form data
+            const loadId = document.getElementById('loadId').value;
+            const dotNumber = document.getElementById('dotNumber').value;
+            const companyName = document.getElementById('companyName').value;
+            const driverPhone = document.getElementById('driverPhone').value;
+            const startTime = document.getElementById('startTime').value;
+            const expirationTime = document.getElementById('expirationTime').value;
 
-    <!-- Text Message Phone Number Field (for text functionality) -->
-    <div class="form-group hidden" id="textPhoneNumber">
-        <label for="recipientPhone">Enter Phone Number to Send Text:</label>
-        <input type="tel" id="recipientPhone" placeholder="123-456-7890" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
-    </div>
-</div>
+            // Fill in confirmation details
+            document.getElementById('confirmLoadId').innerText = loadId;
+            document.getElementById('confirmDotNumber').innerText = dotNumber;
+            document.getElementById('confirmCompanyName').innerText = companyName;
+            document.getElementById('confirmDriverPhone').innerText = driverPhone;
+            document.getElementById('confirmStartTime').innerText = startTime;
+            document.getElementById('confirmExpirationTime').innerText = expirationTime;
 
-<!-- QR Code Generation Script -->
-<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-<script>
-    // Event listener for generating confirmation
-    document.getElementById('generateConfirmationBtn').addEventListener('click', function() {
-        // Retrieve form values
-        const loadID = document.getElementById('loadID').value;
-        const truckMC = document.getElementById('truckMC').value;
-        const companyName = document.getElementById('companyName').value;
-        const driverPhone = document.getElementById('driverPhone').value;
-        const startTime = document.getElementById('startTime').value;
-        const expirationTime = document.getElementById('expirationTime').value;
+            // Generate the QR code
+            const qrCodeData = `https://quecabadbs-v2.vercel.app/display.html?load=${loadId}&dot=${dotNumber}&companyName=${encodeURIComponent(companyName)}&driverPhone=${driverPhone}&start=${startTime}&expiration=${expirationTime}`;
+            document.getElementById('qrCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=150x150`;
 
-        if (loadID && truckMC && companyName && driverPhone && startTime && expirationTime) {
-            // Display the confirmation details
-            document.getElementById('confirmationLoadID').textContent = loadID;
-            document.getElementById('confirmationTruckMC').textContent = truckMC;
-            document.getElementById('confirmationCompanyName').textContent = companyName;
-            document.getElementById('confirmationDriverPhone').textContent = driverPhone;
-            document.getElementById('confirmationDriverPhone').setAttribute('href', `tel:${driverPhone}`);
-            document.getElementById('confirmationStartTime').textContent = startTime;
-            document.getElementById('confirmationExpirationTime').textContent = expirationTime;
-            document.getElementById('confirmationDetails').classList.remove('hidden');
-
-            // Generate the QR code with the provided details
-            const qrCodeData = `https://quecabadbs-pf-display.vercel.app/display.html?load=${loadID}&mc=${truckMC}&phone=${driverPhone}&start=${startTime}&expiration=${expirationTime}`;
-            const qrCode = new QRCode(document.getElementById("qrCode"), {
-                text: qrCodeData,
-                width: 128,
-                height: 128
-            });
-
-            // Show the email/text options
-            document.getElementById('emailTextOptions').classList.remove('hidden');
-            document.getElementById('textPhoneNumber').classList.remove('hidden');
-        } else {
-            alert('Please fill in all fields to generate the confirmation.');
+            // Show confirmation details
+            document.getElementById('confirmationDetails').style.display = 'block';
         }
-    });
 
-    // Event listener for sending confirmation via Email
-    document.getElementById('sendEmailBtn').addEventListener('click', function() {
-        // Grab the data and create email body
-        const loadID = document.getElementById('loadID').value;
-        const truckMC = document.getElementById('truckMC').value;
-        const companyName = document.getElementById('companyName').value;
-        const driverPhone = document.getElementById('driverPhone').value;
-        const startTime = document.getElementById('startTime').value;
-        const expirationTime = document.getElementById('expirationTime').value;
+        // Function to send confirmation via email or text
+        function sendConfirmation(method) {
+            const loadId = document.getElementById('loadId').value;
+            const dotNumber = document.getElementById('dotNumber').value;
+            const companyName = document.getElementById('companyName').value;
+            const driverPhone = document.getElementById('driverPhone').value;
+            const startTime = document.getElementById('startTime').value;
+            const expirationTime = document.getElementById('expirationTime').value;
 
-        // Create the email body with load details and QR code
-        const emailBody = `
-            <h3>Your QueCab AdbS Code</h3>
-            <p>Load# ${loadID} "${companyName}"</p>
-            <p><strong>Truck MC#:</strong> ${truckMC}</p>
-            <p><strong>Driver Phone:</strong> ${driverPhone}</p>
-            <p><strong>Start Time:</strong> ${startTime}</p>
-            <p><strong>Expiration Time:</strong> ${expirationTime}</p>
-            <p>Scan the QR code below to view the details:</p>
-            <img src="${document.getElementById("qrCode").toDataURL('image/png')}" alt="QR Code">
-            <p>Or click the link below to view the load details:</p>
-            <a href="https://quecabadbs-pf-display.vercel.app/display.html?load=${loadID}&mc=${truckMC}&phone=${driverPhone}&start=${startTime}&expiration=${expirationTime}">View Load Details</a>
-        `;
-
-        // Placeholder for email-sending function (using backend service like SendGrid)
-        sendEmail(emailBody); // Needs backend service
-    });
-
-    // Placeholder function for sending email (Replace with actual SendGrid/Mailgun API)
-    function sendEmail(emailBody) {
-        // Implement email sending using backend service like SendGrid or Mailgun
-        alert('Email sent! (This needs to be connected to a backend service.)');
-    }
-
-    // Event listener for sending confirmation via Text
-    document.getElementById('sendTextBtn').addEventListener('click', function() {
-        const recipientPhone = document.getElementById('recipientPhone').value;
-        if (recipientPhone) {
-            alert('Sending confirmation via Text...');
-            // Use a service like Twilio to send the text message with QR code URL
-        } else {
-            alert('Please enter a phone number to send the text.');
+            // Send logic placeholder for email/text (API integration required)
+            alert(`Sending Confirmation via ${method}:\nLoad ID: ${loadId}\nDOT#: ${dotNumber}\nCompany Name: ${companyName}\nDriver Phone: ${driverPhone}\nStart Time: ${startTime}\nExpiration Time: ${expirationTime}`);
         }
-    });
-</script>
-
+    </script>
 </body>
 </html>
