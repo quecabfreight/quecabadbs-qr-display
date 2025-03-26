@@ -57,6 +57,18 @@
         .hidden {
             display: none;
         }
+        .confirmation-display {
+            margin-top: 20px;
+            font-size: 18px;
+            background-color: #003366;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        #qrCode {
+            margin-top: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -107,7 +119,7 @@
     </form>
 
     <!-- Display the generated confirmation details -->
-    <div id="confirmationDetails" class="hidden">
+    <div id="confirmationDetails" class="confirmation-display hidden">
         <p><strong>Load ID:</strong> <span id="confirmationLoadID"></span></p>
         <p><strong>Truck MC#:</strong> <span id="confirmationTruckMC"></span></p>
         <p><strong>Company Name:</strong> <span id="confirmationCompanyName"></span></p>
@@ -170,21 +182,35 @@
     document.getElementById('sendEmailBtn').addEventListener('click', function() {
         // Grab the data and create email body
         const loadID = document.getElementById('loadID').value;
+        const truckMC = document.getElementById('truckMC').value;
         const companyName = document.getElementById('companyName').value;
-        const qrCodeData = document.getElementById("qrCode").toDataURL("image/png");
+        const driverPhone = document.getElementById('driverPhone').value;
+        const startTime = document.getElementById('startTime').value;
+        const expirationTime = document.getElementById('expirationTime').value;
 
-        // Email body HTML with embedded QR code
+        // Create the email body with load details and QR code
         const emailBody = `
             <h3>Your QueCab AdbS Code</h3>
             <p>Load# ${loadID} "${companyName}"</p>
-            <img src="${qrCodeData}" alt="QR Code">
-            <p>Scan this code or click the link below to view load details:</p>
-            <a href="https://quecabadbs-pf-display.vercel.app/display.html?load=${loadID}&companyName=${companyName}">View Load Details</a>
+            <p><strong>Truck MC#:</strong> ${truckMC}</p>
+            <p><strong>Driver Phone:</strong> ${driverPhone}</p>
+            <p><strong>Start Time:</strong> ${startTime}</p>
+            <p><strong>Expiration Time:</strong> ${expirationTime}</p>
+            <p>Scan the QR code below to view the details:</p>
+            <img src="${document.getElementById("qrCode").toDataURL('image/png')}" alt="QR Code">
+            <p>Or click the link below to view the load details:</p>
+            <a href="https://quecabadbs-pf-display.vercel.app/display.html?load=${loadID}&mc=${truckMC}&phone=${driverPhone}&start=${startTime}&expiration=${expirationTime}">View Load Details</a>
         `;
 
-        // Use an email service like SendGrid to send this HTML email
-        alert("Sending email with embedded QR code... (This requires an email API)");
+        // Call the sendEmail function (to be implemented with backend service)
+        sendEmail(emailBody); // Placeholder for backend function to send email
     });
+
+    // Placeholder function for sending email (Replace with actual SendGrid/Mailgun API)
+    function sendEmail(emailBody) {
+        // Implement email sending here using SendGrid, Mailgun, or other APIs
+        alert('Email sent! (This needs to be connected to a backend service.)');
+    }
 
     // Event listener for sending confirmation via Text
     document.getElementById('sendTextBtn').addEventListener('click', function() {
