@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truck & Driver Confirmation (TDC)</title>
+    <title>Truck/Driver Confirmation</title>
     <style>
         /* Basic Styling */
         body {
@@ -22,6 +22,8 @@
         }
         h1 {
             text-align: center;
+            font-size: 24px;
+            color: #003366;
         }
         .form-group {
             margin-bottom: 20px;
@@ -29,7 +31,7 @@
         label {
             font-weight: bold;
         }
-        input[type="text"], input[type="tel"] {
+        input[type="text"], input[type="tel"], input[type="date"] {
             width: 100%;
             padding: 8px;
             margin-top: 8px;
@@ -47,6 +49,7 @@
             text-align: center;
             width: 100%;
             font-size: 18px;
+            margin-top: 20px;
         }
         .btn:hover {
             background-color: #45a049;
@@ -63,26 +66,44 @@
 <body>
 
 <div class="container">
-    <h1>Truck & Driver Confirmation (TDC)</h1>
+    <h1>Truck/Driver Confirmation</h1>
 
     <!-- Form for Truck & Driver Confirmation -->
     <form id="tdcForm">
+        <!-- Load ID Field -->
+        <div class="form-group">
+            <label for="loadID">Load ID:</label>
+            <input type="text" id="loadID" placeholder="Enter Load ID" required>
+        </div>
+
+        <!-- Truck MC# Field -->
+        <div class="form-group">
+            <label for="truckMC">Truck MC#:</label>
+            <input type="text" id="truckMC" placeholder="Enter Truck MC#" required>
+        </div>
+
         <!-- Company Name Field -->
         <div class="form-group">
             <label for="companyName">Company Name:</label>
             <input type="text" id="companyName" placeholder="Enter Company Name" required>
         </div>
 
-        <!-- Driver Phone Number Field (Clickable if text) -->
+        <!-- Driver Phone Field -->
         <div class="form-group">
-            <label for="driverPhone">Driver Phone (Clickable if text):</label>
+            <label for="driverPhone">Driver Phone:</label>
             <input type="tel" id="driverPhone" placeholder="123-456-7890" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
         </div>
 
-        <!-- Load ID Field -->
+        <!-- Start Time Field -->
         <div class="form-group">
-            <label for="loadID">Load ID:</label>
-            <input type="text" id="loadID" placeholder="Enter Load ID" required>
+            <label for="startTime">Start Time:</label>
+            <input type="date" id="startTime" required>
+        </div>
+
+        <!-- Expiration Time Field -->
+        <div class="form-group">
+            <label for="expirationTime">Expiration Time:</label>
+            <input type="date" id="expirationTime" required>
         </div>
 
         <!-- Generate Confirmation Button -->
@@ -92,8 +113,11 @@
     <!-- Display the generated confirmation details -->
     <div id="confirmationDetails" class="confirmation-display hidden">
         <p><strong>Load ID:</strong> <span id="confirmationLoadID"></span></p>
+        <p><strong>Truck MC#:</strong> <span id="confirmationTruckMC"></span></p>
         <p><strong>Company Name:</strong> <span id="confirmationCompanyName"></span></p>
         <p><strong>Driver Phone:</strong> <a href="tel:" id="confirmationDriverPhone"></a></p>
+        <p><strong>Start Time:</strong> <span id="confirmationStartTime"></span></p>
+        <p><strong>Expiration Time:</strong> <span id="confirmationExpirationTime"></span></p>
     </div>
 
     <!-- Email/Text Options, initially hidden -->
@@ -108,16 +132,22 @@
     // Event listener for generating confirmation
     document.getElementById('generateConfirmationBtn').addEventListener('click', function() {
         // Retrieve form values
+        const loadID = document.getElementById('loadID').value;
+        const truckMC = document.getElementById('truckMC').value;
         const companyName = document.getElementById('companyName').value;
         const driverPhone = document.getElementById('driverPhone').value;
-        const loadID = document.getElementById('loadID').value;
+        const startTime = document.getElementById('startTime').value;
+        const expirationTime = document.getElementById('expirationTime').value;
 
-        if (companyName && driverPhone && loadID) {
+        if (loadID && truckMC && companyName && driverPhone && startTime && expirationTime) {
             // Display the confirmation details
             document.getElementById('confirmationLoadID').textContent = loadID;
+            document.getElementById('confirmationTruckMC').textContent = truckMC;
             document.getElementById('confirmationCompanyName').textContent = companyName;
             document.getElementById('confirmationDriverPhone').textContent = driverPhone;
             document.getElementById('confirmationDriverPhone').setAttribute('href', `tel:${driverPhone}`);
+            document.getElementById('confirmationStartTime').textContent = startTime;
+            document.getElementById('confirmationExpirationTime').textContent = expirationTime;
             document.getElementById('confirmationDetails').classList.remove('hidden');
 
             // Show the email/text options
