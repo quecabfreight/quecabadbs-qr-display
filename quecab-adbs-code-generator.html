@@ -13,10 +13,10 @@
 
         .container {
             background-color: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            max-width: 800px;
             margin: auto;
         }
 
@@ -28,31 +28,32 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         label {
-            font-size: 14px;
+            font-size: 16px;
             color: #333;
+            font-weight: bold;
         }
 
         input {
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 6px;
             width: 100%;
         }
 
         button {
             background-color: #1a3d72;
             color: white;
-            padding: 12px;
-            font-size: 16px;
+            padding: 14px;
+            font-size: 18px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         button:hover {
@@ -60,7 +61,7 @@
         }
 
         .confirmationDetails {
-            margin-top: 20px;
+            margin-top: 25px;
             padding: 20px;
             background-color: #f0f9ff;
             border-radius: 8px;
@@ -72,14 +73,14 @@
         }
 
         .confirmationDetails p {
-            font-size: 16px;
-            margin: 5px 0;
+            font-size: 18px;
+            margin: 10px 0;
         }
 
         #qrCodeImage {
             margin-top: 15px;
-            width: 150px;
-            height: 150px;
+            width: 200px;
+            height: 200px;
         }
 
         .sendButtons button {
@@ -87,7 +88,7 @@
             width: 48%;
             display: inline-block;
             background-color: #28a745;
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
         .sendButtons button:first-child {
@@ -162,7 +163,7 @@
             document.getElementById('confirmExpirationTime').innerText = expirationTime;
 
             const qrCodeData = `https://quecabadbs-v2.vercel.app/display.html?load=${loadId}&dot=${dotNumber}&companyName=${encodeURIComponent(companyName)}&driverPhone=${driverPhone}&start=${startTime}&expiration=${expirationTime}`;
-            document.getElementById('qrCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=150x150`;
+            document.getElementById('qrCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=200x200`;
 
             document.getElementById('confirmationDetails').style.display = 'block';
         }
