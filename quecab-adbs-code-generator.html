@@ -4,18 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Truck/Driver Confirmation</title>
-    <link rel="stylesheet" href="style.css"> <!-- Make sure to link to your styles -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1a3d72;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #1a3d72;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #154c7d;
+        }
+
+        .confirmationDetails {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f0f9ff;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .confirmationDetails h3 {
+            color: #1a3d72;
+        }
+
+        .confirmationDetails p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        #qrCodeImage {
+            margin-top: 15px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .sendButtons button {
+            margin-top: 15px;
+            width: 48%;
+            display: inline-block;
+            background-color: #28a745;
+            border-radius: 4px;
+        }
+
+        .sendButtons button:first-child {
+            background-color: #007bff;
+        }
+
+        .sendButtons button:hover {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
         <h2>Truck/Driver Confirmation</h2>
-        
-        <!-- Form Section -->
+
         <form id="confirmationForm">
             <label for="loadId">Load ID:</label>
             <input type="text" id="loadId" name="loadId" required placeholder="Enter Load ID">
 
-            <label for="dotNumber">DOT#:</label> <!-- Changed from MC# to DOT# -->
+            <label for="dotNumber">DOT#:</label>
             <input type="text" id="dotNumber" name="dotNumber" required placeholder="Enter DOT#">
 
             <label for="companyName">Company Name:</label>
@@ -33,8 +126,7 @@
             <button type="button" onclick="generateConfirmation()">Generate Confirmation</button>
         </form>
 
-        <!-- Confirmation Output Section -->
-        <div id="confirmationDetails" class="confirmationDetails" style="display:none;">
+        <div id="confirmationDetails" class="confirmationDetails">
             <h3>Confirmation Details</h3>
             <p><strong>Load ID:</strong> <span id="confirmLoadId"></span></p>
             <p><strong>DOT#:</strong> <span id="confirmDotNumber"></span></p>
@@ -43,20 +135,18 @@
             <p><strong>Start Time:</strong> <span id="confirmStartTime"></span></p>
             <p><strong>Expiration Time:</strong> <span id="confirmExpirationTime"></span></p>
 
-            <!-- QR Code Section -->
             <p><strong>QR Code:</strong></p>
-            <img id="qrCodeImage" src="" alt="QR Code" style="width:150px; height:150px;"/>
+            <img id="qrCodeImage" src="" alt="QR Code">
 
-            <!-- Send options -->
-            <button type="button" onclick="sendConfirmation('email')">Send via Email</button>
-            <button type="button" onclick="sendConfirmation('text')">Send via Text</button>
+            <div class="sendButtons">
+                <button type="button" onclick="sendConfirmation('email')">Send via Email</button>
+                <button type="button" onclick="sendConfirmation('text')">Send via Text</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Function to generate confirmation
         function generateConfirmation() {
-            // Gather form data
             const loadId = document.getElementById('loadId').value;
             const dotNumber = document.getElementById('dotNumber').value;
             const companyName = document.getElementById('companyName').value;
@@ -64,7 +154,6 @@
             const startTime = document.getElementById('startTime').value;
             const expirationTime = document.getElementById('expirationTime').value;
 
-            // Fill in confirmation details
             document.getElementById('confirmLoadId').innerText = loadId;
             document.getElementById('confirmDotNumber').innerText = dotNumber;
             document.getElementById('confirmCompanyName').innerText = companyName;
@@ -72,15 +161,12 @@
             document.getElementById('confirmStartTime').innerText = startTime;
             document.getElementById('confirmExpirationTime').innerText = expirationTime;
 
-            // Generate the QR code
             const qrCodeData = `https://quecabadbs-v2.vercel.app/display.html?load=${loadId}&dot=${dotNumber}&companyName=${encodeURIComponent(companyName)}&driverPhone=${driverPhone}&start=${startTime}&expiration=${expirationTime}`;
             document.getElementById('qrCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=150x150`;
 
-            // Show confirmation details
             document.getElementById('confirmationDetails').style.display = 'block';
         }
 
-        // Function to send confirmation via email or text
         function sendConfirmation(method) {
             const loadId = document.getElementById('loadId').value;
             const dotNumber = document.getElementById('dotNumber').value;
@@ -89,9 +175,9 @@
             const startTime = document.getElementById('startTime').value;
             const expirationTime = document.getElementById('expirationTime').value;
 
-            // Send logic placeholder for email/text (API integration required)
             alert(`Sending Confirmation via ${method}:\nLoad ID: ${loadId}\nDOT#: ${dotNumber}\nCompany Name: ${companyName}\nDriver Phone: ${driverPhone}\nStart Time: ${startTime}\nExpiration Time: ${expirationTime}`);
         }
     </script>
+
 </body>
 </html>
