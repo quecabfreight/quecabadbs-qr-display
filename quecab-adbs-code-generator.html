@@ -23,24 +23,24 @@
         h2 {
             text-align: center;
             color: #1a3d72;
-            font-size: 32px; /* 1.5x larger */
+            font-size: 32px;
         }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 35px; /* Increased space between form elements */
+            gap: 35px;
         }
 
         label {
-            font-size: 24px; /* 1.5x larger */
+            font-size: 24px;
             color: #333;
             font-weight: bold;
         }
 
         input {
             padding: 18px;
-            font-size: 24px; /* 1.5x larger */
+            font-size: 24px;
             border: 1px solid #ccc;
             border-radius: 10px;
             width: 100%;
@@ -50,7 +50,7 @@
             background-color: #1a3d72;
             color: white;
             padding: 20px;
-            font-size: 24px; /* 1.5x larger */
+            font-size: 24px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
@@ -71,17 +71,17 @@
 
         .confirmationDetails h3 {
             color: #1a3d72;
-            font-size: 30px; /* 1.5x larger */
+            font-size: 30px;
         }
 
         .confirmationDetails p {
-            font-size: 24px; /* 1.5x larger */
+            font-size: 24px;
             margin: 20px 0;
         }
 
         #qrCodeImage {
             margin-top: 25px;
-            width: 300px; /* 1.5x larger */
+            width: 300px;
             height: 300px;
         }
 
@@ -92,7 +92,7 @@
             background-color: #28a745;
             border-radius: 10px;
             padding: 20px;
-            font-size: 24px; /* 1.5x larger */
+            font-size: 24px;
         }
 
         .sendButtons button:first-child {
@@ -144,8 +144,8 @@
             <img id="qrCodeImage" src="" alt="QR Code">
 
             <div class="sendButtons">
-                <button type="button" onclick="sendConfirmation('email')">Send via Email</button>
-                <button type="button" onclick="sendConfirmation('text')">Send via Text</button>
+                <button type="button" onclick="sendEmail()">Send via Email</button>
+                <button type="button" onclick="sendText()">Send via Text</button>
             </div>
         </div>
     </div>
@@ -172,7 +172,7 @@
             document.getElementById('confirmationDetails').style.display = 'block';
         }
 
-        function sendConfirmation(method) {
+        function sendEmail() {
             const loadId = document.getElementById('loadId').value;
             const dotNumber = document.getElementById('dotNumber').value;
             const companyName = document.getElementById('companyName').value;
@@ -180,7 +180,52 @@
             const startTime = document.getElementById('startTime').value;
             const expirationTime = document.getElementById('expirationTime').value;
 
-            alert(`Sending Confirmation via ${method}:\nLoad ID: ${loadId}\nDOT#: ${dotNumber}\nCompany Name: ${companyName}\nDriver Phone: ${driverPhone}\nStart Time: ${startTime}\nExpiration Time: ${expirationTime}`);
+            // Using EmailJS for email functionality (you need to configure EmailJS account and template)
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+                loadId: loadId,
+                dotNumber: dotNumber,
+                companyName: companyName,
+                driverPhone: driverPhone,
+                startTime: startTime,
+                expirationTime: expirationTime,
+            })
+            .then((response) => {
+                alert('Email sent successfully');
+            }, (error) => {
+                alert('Failed to send email');
+            });
+        }
+
+        function sendText() {
+            const loadId = document.getElementById('loadId').value;
+            const dotNumber = document.getElementById('dotNumber').value;
+            const companyName = document.getElementById('companyName').value;
+            const driverPhone = document.getElementById('driverPhone').value;
+            const startTime = document.getElementById('startTime').value;
+            const expirationTime = document.getElementById('expirationTime').value;
+
+            // Using Twilio for text functionality (replace with your Twilio account SID, Auth token, and phone numbers)
+            const message = `Load ID: ${loadId}\nDOT#: ${dotNumber}\nCompany Name: ${companyName}\nDriver Phone: ${driverPhone}\nStart Time: ${startTime}\nExpiration Time: ${expirationTime}`;
+
+            fetch('https://api.twilio.com/2010-04-01/Accounts/YOUR_ACCOUNT_SID/Messages.json', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + btoa('YOUR_ACCOUNT_SID:YOUR_AUTH_TOKEN'),
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'From': 'YOUR_TWILIO_PHONE_NUMBER',
+                    'To': driverPhone,
+                    'Body': message,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Text sent successfully');
+            })
+            .catch(error => {
+                alert('Failed to send text');
+            });
         }
     </script>
 
