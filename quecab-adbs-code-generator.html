@@ -1,137 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Truck/Driver Confirmation (TDC)</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script> <!-- QR Code Library -->
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 30px;
-      text-align: center;
-    }
-    h1 {
-      color: #003366;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 15px;
-    }
-    input, button {
-      padding: 10px;
-      margin: 8px 0;
-      font-size: 16px;
-      width: 300px;
-      max-width: 90%;
-    }
-    .qr-preview {
-      margin-top: 30px;
-    }
-    .qr-wrapper {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    img {
-      width: 250px;
-      height: 250px;
-    }
-    .actions {
-      margin-top: 20px;
-    }
-    .actions button {
-      margin: 5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truck & Driver Confirmation (TDC)</title>
+    <style>
+        /* Basic Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            font-size: 18px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+        .confirmation-display {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Truck/Driver Confirmation (TDC)</h1>
 
-  <label for="loadId">Load ID:</label>
-  <input type="text" id="loadId" placeholder="Enter Load ID" required />
+<div class="container">
+    <h1>Truck & Driver Confirmation (TDC)</h1>
 
-  <label for="mc">Truck MC#:</label>
-  <input type="text" id="mc" placeholder="Enter Truck MC#" required />
+    <!-- Form for Truck & Driver Confirmation -->
+    <form id="tdcForm">
+        <!-- Company Name Field -->
+        <div class="form-group">
+            <label for="companyName">Company Name:</label>
+            <input type="text" id="companyName" placeholder="Enter Company Name" required>
+        </div>
 
-  <label for="companyName">Company Name:</label>
-  <input type="text" id="companyName" placeholder="Enter Company Name" required />
+        <!-- Driver Phone Number Field (Clickable if text) -->
+        <div class="form-group">
+            <label for="driverPhone">Driver Phone (Clickable if text):</label>
+            <input type="tel" id="driverPhone" placeholder="123-456-7890" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+        </div>
 
-  <label for="driverPhone">Driver Phone:</label>
-  <input type="tel" id="driverPhone" placeholder="123-456-7890" required />
+        <!-- Load ID Field -->
+        <div class="form-group">
+            <label for="loadID">Load ID:</label>
+            <input type="text" id="loadID" placeholder="Enter Load ID" required>
+        </div>
 
-  <label for="start">Start Time:</label>
-  <input type="datetime-local" id="start" required />
+        <!-- Generate Confirmation Button -->
+        <button type="button" class="btn" id="generateConfirmationBtn">Generate Confirmation</button>
+    </form>
 
-  <label for="expiration">Expiration Time:</label>
-  <input type="datetime-local" id="expiration" required />
-
-  <br/><br/>
-  <button onclick="generate()">Generate Confirmation</button>
-
-  <div class="qr-preview" id="qrPreview" style="display:none;">
-    <h3>Your QueCab AdbS Code</h3>
-    <div class="qr-wrapper">
-      <img id="qrImage" src="" alt="QR Code" />
+    <!-- Display the generated confirmation details -->
+    <div id="confirmationDetails" class="confirmation-display hidden">
+        <p><strong>Load ID:</strong> <span id="confirmationLoadID"></span></p>
+        <p><strong>Company Name:</strong> <span id="confirmationCompanyName"></span></p>
+        <p><strong>Driver Phone:</strong> <a href="tel:" id="confirmationDriverPhone"></a></p>
     </div>
-    <div class="actions">
-      <button onclick="sendLink()">📧 Email Code</button>
-      <button onclick="textLink()">📱 Text Code</button>
+
+    <!-- Email/Text Options, initially hidden -->
+    <div class="hidden" id="emailTextOptions">
+        <p>Select an option to send the confirmation:</p>
+        <button class="btn" id="sendEmailBtn">Send via Email</button>
+        <button class="btn" id="sendTextBtn">Send via Text</button>
     </div>
-  </div>
+</div>
 
-  <script>
-    function formatPhone(phone) {
-      return phone.replace(/\D/g, '')
-        .replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-    }
+<script>
+    // Event listener for generating confirmation
+    document.getElementById('generateConfirmationBtn').addEventListener('click', function() {
+        // Retrieve form values
+        const companyName = document.getElementById('companyName').value;
+        const driverPhone = document.getElementById('driverPhone').value;
+        const loadID = document.getElementById('loadID').value;
 
-    function generate() {
-      const load = document.getElementById("loadId").value;
-      const mc = document.getElementById("mc").value;
-      const companyName = document.getElementById("companyName").value;
-      const driverPhone = formatPhone(document.getElementById("driverPhone").value);
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
+        if (companyName && driverPhone && loadID) {
+            // Display the confirmation details
+            document.getElementById('confirmationLoadID').textContent = loadID;
+            document.getElementById('confirmationCompanyName').textContent = companyName;
+            document.getElementById('confirmationDriverPhone').textContent = driverPhone;
+            document.getElementById('confirmationDriverPhone').setAttribute('href', `tel:${driverPhone}`);
+            document.getElementById('confirmationDetails').classList.remove('hidden');
 
-      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
-      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&companyName=${encodeURIComponent(companyName)}&phone=${encodeURIComponent(driverPhone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
+            // Show the email/text options
+            document.getElementById('emailTextOptions').classList.remove('hidden');
+        } else {
+            alert('Please fill in all fields to generate the confirmation.');
+        }
+    });
 
-      document.getElementById("qrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
-      document.getElementById("qrPreview").style.display = "block";
-    }
+    // Event listener for sending confirmation via Email
+    document.getElementById('sendEmailBtn').addEventListener('click', function() {
+        alert('Sending confirmation via Email...');
+        // Implement email sending functionality here
+    });
 
-    function sendLink() {
-      const load = document.getElementById("loadId").value;
-      const mc = document.getElementById("mc").value;
-      const driverPhone = formatPhone(document.getElementById("driverPhone").value);
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
+    // Event listener for sending confirmation via Text
+    document.getElementById('sendTextBtn').addEventListener('click', function() {
+        alert('Sending confirmation via Text...');
+        // Implement text sending functionality here
+    });
+</script>
 
-      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
-      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(driverPhone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
-
-      const subject = encodeURIComponent("Your QueCab AdbS Code");
-      const body = encodeURIComponent(`Scan this code or click the link below to view load details:\n${url}`);
-      window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    }
-
-    function textLink() {
-      const load = document.getElementById("loadId").value;
-      const mc = document.getElementById("mc").value;
-      const driverPhone = formatPhone(document.getElementById("driverPhone").value);
-      const start = document.getElementById("start").value;
-      const expiration = document.getElementById("expiration").value;
-
-      const baseURL = "https://quecabadbs-qr-display.vercel.app/display.html";
-      const url = `${baseURL}?load=${encodeURIComponent(load)}&mc=${encodeURIComponent(mc)}&phone=${encodeURIComponent(driverPhone)}&start=${encodeURIComponent(start)}&expiration=${encodeURIComponent(expiration)}`;
-
-      // Use SMS URL
-      const smsMessage = encodeURIComponent(`Your QueCab AdbS Code:\n${url}`);
-      window.location.href = `sms:?body=${smsMessage}`;
-    }
-  </script>
 </body>
 </html>
