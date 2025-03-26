@@ -44,7 +44,7 @@
             display: inline-block;
             background-color: #003366;
             color: white;
-            padding: 15px 30px;  /* Larger padding */
+            padding: 15px 30px;  /* Larger button padding */
             border-radius: 6px;
             cursor: pointer;
             text-align: center;
@@ -213,13 +213,13 @@
             <a href="https://quecabadbs-pf-display.vercel.app/display.html?load=${loadID}&mc=${truckMC}&phone=${driverPhone}&start=${startTime}&expiration=${expirationTime}">View Load Details</a>
         `;
 
-        // Call the sendEmail function (to be implemented with backend service)
-        sendEmail(emailBody); // Placeholder for backend function to send email
+        // Placeholder for email-sending function (using backend service like SendGrid)
+        sendEmail(emailBody); // Needs backend service
     });
 
     // Placeholder function for sending email (Replace with actual SendGrid/Mailgun API)
     function sendEmail(emailBody) {
-        // Implement email sending here using SendGrid, Mailgun, or other APIs
+        // Implement email sending using backend service like SendGrid or Mailgun
         alert('Email sent! (This needs to be connected to a backend service.)');
     }
 
@@ -228,7 +228,7 @@
         const recipientPhone = document.getElementById('recipientPhone').value;
         if (recipientPhone) {
             alert('Sending confirmation via Text...');
-            // You'd use an API like Twilio to send text messages with QR code as an image link or base64
+            // Use a service like Twilio to send the text message with QR code URL
         } else {
             alert('Please enter a phone number to send the text.');
         }
