@@ -41,7 +41,7 @@
         }
         .btn {
             display: inline-block;
-            background-color: #4CAF50;
+            background-color: #003366;
             color: white;
             padding: 10px 20px;
             border-radius: 4px;
@@ -52,14 +52,10 @@
             margin-top: 20px;
         }
         .btn:hover {
-            background-color: #45a049;
+            background-color: #005099;
         }
         .hidden {
             display: none;
-        }
-        .confirmation-display {
-            margin-top: 20px;
-            font-size: 18px;
         }
     </style>
 </head>
@@ -111,13 +107,16 @@
     </form>
 
     <!-- Display the generated confirmation details -->
-    <div id="confirmationDetails" class="confirmation-display hidden">
+    <div id="confirmationDetails" class="hidden">
         <p><strong>Load ID:</strong> <span id="confirmationLoadID"></span></p>
         <p><strong>Truck MC#:</strong> <span id="confirmationTruckMC"></span></p>
         <p><strong>Company Name:</strong> <span id="confirmationCompanyName"></span></p>
         <p><strong>Driver Phone:</strong> <a href="tel:" id="confirmationDriverPhone"></a></p>
         <p><strong>Start Time:</strong> <span id="confirmationStartTime"></span></p>
         <p><strong>Expiration Time:</strong> <span id="confirmationExpirationTime"></span></p>
+
+        <!-- QR Code Display -->
+        <div id="qrCode"></div>
     </div>
 
     <!-- Email/Text Options, initially hidden -->
@@ -128,6 +127,8 @@
     </div>
 </div>
 
+<!-- QR Code Generation Script -->
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
 <script>
     // Event listener for generating confirmation
     document.getElementById('generateConfirmationBtn').addEventListener('click', function() {
@@ -150,6 +151,14 @@
             document.getElementById('confirmationExpirationTime').textContent = expirationTime;
             document.getElementById('confirmationDetails').classList.remove('hidden');
 
+            // Generate the QR code with the provided details
+            const qrCodeData = `https://quecabadbs-pf-display.vercel.app/display.html?load=${loadID}&mc=${truckMC}&phone=${driverPhone}&start=${startTime}&expiration=${expirationTime}`;
+            const qrCode = new QRCode(document.getElementById("qrCode"), {
+                text: qrCodeData,
+                width: 128,
+                height: 128
+            });
+
             // Show the email/text options
             document.getElementById('emailTextOptions').classList.remove('hidden');
         } else {
@@ -159,14 +168,28 @@
 
     // Event listener for sending confirmation via Email
     document.getElementById('sendEmailBtn').addEventListener('click', function() {
-        alert('Sending confirmation via Email...');
-        // Implement email sending functionality here
+        // Grab the data and create email body
+        const loadID = document.getElementById('loadID').value;
+        const companyName = document.getElementById('companyName').value;
+        const qrCodeData = document.getElementById("qrCode").toDataURL("image/png");
+
+        // Email body HTML with embedded QR code
+        const emailBody = `
+            <h3>Your QueCab AdbS Code</h3>
+            <p>Load# ${loadID} "${companyName}"</p>
+            <img src="${qrCodeData}" alt="QR Code">
+            <p>Scan this code or click the link below to view load details:</p>
+            <a href="https://quecabadbs-pf-display.vercel.app/display.html?load=${loadID}&companyName=${companyName}">View Load Details</a>
+        `;
+
+        // Use an email service like SendGrid to send this HTML email
+        alert("Sending email with embedded QR code... (This requires an email API)");
     });
 
     // Event listener for sending confirmation via Text
     document.getElementById('sendTextBtn').addEventListener('click', function() {
         alert('Sending confirmation via Text...');
-        // Implement text sending functionality here
+        // You'd use an API like Twilio to send text messages with QR code as an image link or base64
     });
 </script>
 
