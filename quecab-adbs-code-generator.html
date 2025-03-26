@@ -8,12 +8,12 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f7fa;
-            padding: 20px;
+            padding: 30px;
         }
 
         .container {
             background-color: white;
-            padding: 40px;
+            padding: 45px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             max-width: 900px;
@@ -23,38 +23,38 @@
         h2 {
             text-align: center;
             color: #1a3d72;
-            font-size: 28px;
+            font-size: 32px; /* 1.5x larger */
         }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 35px; /* Increased space between form elements */
         }
 
         label {
-            font-size: 18px;
+            font-size: 24px; /* 1.5x larger */
             color: #333;
             font-weight: bold;
         }
 
         input {
-            padding: 15px;
-            font-size: 20px;
+            padding: 18px;
+            font-size: 24px; /* 1.5x larger */
             border: 1px solid #ccc;
-            border-radius: 8px;
+            border-radius: 10px;
             width: 100%;
         }
 
         button {
             background-color: #1a3d72;
             color: white;
-            padding: 18px;
-            font-size: 20px;
+            padding: 20px;
+            font-size: 24px; /* 1.5x larger */
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         button:hover {
@@ -62,37 +62,37 @@
         }
 
         .confirmationDetails {
-            margin-top: 30px;
-            padding: 30px;
+            margin-top: 35px;
+            padding: 35px;
             background-color: #f0f9ff;
-            border-radius: 8px;
+            border-radius: 10px;
             display: none;
         }
 
         .confirmationDetails h3 {
             color: #1a3d72;
-            font-size: 24px;
+            font-size: 30px; /* 1.5x larger */
         }
 
         .confirmationDetails p {
-            font-size: 20px;
-            margin: 15px 0;
+            font-size: 24px; /* 1.5x larger */
+            margin: 20px 0;
         }
 
         #qrCodeImage {
-            margin-top: 20px;
-            width: 250px;
-            height: 250px;
+            margin-top: 25px;
+            width: 300px; /* 1.5x larger */
+            height: 300px;
         }
 
         .sendButtons button {
-            margin-top: 20px;
+            margin-top: 25px;
             width: 48%;
             display: inline-block;
             background-color: #28a745;
-            border-radius: 8px;
-            padding: 18px;
-            font-size: 20px;
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 24px; /* 1.5x larger */
         }
 
         .sendButtons button:first-child {
@@ -167,7 +167,7 @@
             document.getElementById('confirmExpirationTime').innerText = expirationTime;
 
             const qrCodeData = `https://quecabadbs-v2.vercel.app/display.html?load=${loadId}&dot=${dotNumber}&companyName=${encodeURIComponent(companyName)}&driverPhone=${driverPhone}&start=${startTime}&expiration=${expirationTime}`;
-            document.getElementById('qrCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=250x250`;
+            document.getElementById('qrCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrCodeData)}&size=300x300`;
 
             document.getElementById('confirmationDetails').style.display = 'block';
         }
