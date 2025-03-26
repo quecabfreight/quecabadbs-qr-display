@@ -13,7 +13,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 800px;
+            max-width: 1000px;  /* Increased width for better readability */
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
@@ -22,7 +22,7 @@
         }
         h1 {
             text-align: center;
-            font-size: 24px;
+            font-size: 30px;  /* Increased font size for better visibility */
             color: #003366;
         }
         .form-group {
@@ -33,9 +33,9 @@
         }
         input[type="text"], input[type="tel"], input[type="date"] {
             width: 100%;
-            padding: 8px;
+            padding: 10px;  /* Increased padding for easier typing */
             margin-top: 8px;
-            font-size: 16px;
+            font-size: 18px;  /* Larger font size */
             border: 1px solid #ddd;
             border-radius: 4px;
         }
@@ -43,12 +43,12 @@
             display: inline-block;
             background-color: #003366;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;  /* Larger padding for buttons */
             border-radius: 4px;
             cursor: pointer;
             text-align: center;
             width: 100%;
-            font-size: 18px;
+            font-size: 20px;  /* Larger font size */
             margin-top: 20px;
         }
         .btn:hover {
@@ -59,15 +59,18 @@
         }
         .confirmation-display {
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 20px;
             background-color: #003366;
             color: white;
-            padding: 10px;
+            padding: 15px;
             border-radius: 4px;
         }
         #qrCode {
             margin-top: 20px;
             text-align: center;
+        }
+        .form-group input[type="tel"] {
+            font-size: 18px;  /* Ensured phone number input is readable */
         }
     </style>
 </head>
@@ -137,6 +140,12 @@
         <button class="btn" id="sendEmailBtn">Send via Email</button>
         <button class="btn" id="sendTextBtn">Send via Text</button>
     </div>
+
+    <!-- Text Message Phone Number Field (for text functionality) -->
+    <div class="form-group hidden" id="textPhoneNumber">
+        <label for="recipientPhone">Enter Phone Number to Send Text:</label>
+        <input type="tel" id="recipientPhone" placeholder="123-456-7890" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}">
+    </div>
 </div>
 
 <!-- QR Code Generation Script -->
@@ -173,6 +182,7 @@
 
             // Show the email/text options
             document.getElementById('emailTextOptions').classList.remove('hidden');
+            document.getElementById('textPhoneNumber').classList.remove('hidden');
         } else {
             alert('Please fill in all fields to generate the confirmation.');
         }
@@ -214,8 +224,13 @@
 
     // Event listener for sending confirmation via Text
     document.getElementById('sendTextBtn').addEventListener('click', function() {
-        alert('Sending confirmation via Text...');
-        // You'd use an API like Twilio to send text messages with QR code as an image link or base64
+        const recipientPhone = document.getElementById('recipientPhone').value;
+        if (recipientPhone) {
+            alert('Sending confirmation via Text...');
+            // You'd use an API like Twilio to send text messages with QR code as an image link or base64
+        } else {
+            alert('Please enter a phone number to send the text.');
+        }
     });
 </script>
 
