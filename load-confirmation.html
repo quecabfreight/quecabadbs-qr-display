@@ -1,0 +1,25 @@
+// Function to send email (or text)
+function sendEmail() {
+    const loadId = document.getElementById('loadId').value;
+    const dotNumber = document.getElementById('dotNumber').value;
+    const companyName = document.getElementById('companyName').value;
+    const driverPhone = document.getElementById('driverPhone').value;
+    
+    // Collect only the details you want to send (no questions, just confirmation + QR code)
+    const emailParams = {
+        loadId: loadId,
+        dotNumber: dotNumber,
+        companyName: companyName,
+        driverPhone: driverPhone,
+        qrCodeUrl: document.getElementById('qrCodeImage').src  // QR Code image URL (assumed)
+    };
+
+    // Send the email via EmailJS (or text, depending on your service)
+    emailjs.send("service_og2najj", "template_eoqhkil", emailParams)
+        .then(function(response) {
+            alert('Email sent successfully!');
+        }, function(error) {
+            alert('Failed to send email: ' + error);
+        });
+}
+
